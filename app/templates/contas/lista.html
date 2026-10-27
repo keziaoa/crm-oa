@@ -7,7 +7,14 @@
   <a class="botao botao-principal" href="{{ url_for('contas.nova') }}">+ Nova conta</a>
 </div>
 
+<div class="atalhos-visao">
+  <a class="atalho {{ 'atalho-on' if not visao }}" href="{{ url_for('contas.lista') }}">Todas</a>
+  <a class="atalho {{ 'atalho-on' if visao == 'prospeccao' }}" href="{{ url_for('contas.lista', visao='prospeccao') }}">Em prospecção</a>
+  <a class="atalho {{ 'atalho-on' if visao == 'ativos' }}" href="{{ url_for('contas.lista', visao='ativos') }}">Clientes ativos <span class="contador-mini">{{ total_ativos }}</span></a>
+</div>
+
 <form class="filtros" method="get" action="{{ url_for('contas.lista') }}">
+  <input type="hidden" name="visao" value="{{ visao }}">
   <input type="text" name="q" value="{{ q }}" placeholder="Buscar por nome, razão social ou ID…">
 
   <select name="status">

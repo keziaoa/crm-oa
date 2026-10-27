@@ -6,6 +6,9 @@
     <span class="valor">{{ valor if (valor is not none and valor != '') else '—' }}</span></div>
 {% endmacro %}
 
+{# Formata um número em reais: 5000 -> "R$ 5.000" #}
+{% macro brl(n) %}{% if n is none %}A consultar{% else %}R$ {{ '{:,.0f}'.format(n).replace(',', '.') }}{% endif %}{% endmacro %}
+
 {% block conteudo %}
 <div class="cabecalho-pagina">
   <div>
@@ -15,6 +18,7 @@
     </h2>
     <p>
       <span class="badge badge-{{ status_tipo.get(c.status, 'pipeline') }}">{{ c.status }}</span>
+      {% if c.eh_cliente_ativo %}<span class="badge badge-ativo">● Cliente ativo</span>{% endif %}
       <span class="prio prio-{{ c.prioridade|lower }}">Prioridade {{ c.prioridade }}</span>
       <span class="fase-txt">{{ status_fase.get(c.status, '') }}</span>
     </p>
@@ -61,6 +65,24 @@
     {{ linha('Fonte do faturamento', c.fonte_faturamento) }}
   </div>
   {% if c.gatilho %}<p class="texto-longo"><strong>Gatilho / sinais:</strong> {{ c.gatilho }}</p>{% endif %}
+</section>
+
+<section class="cartao">
+  <h3>Contrato / Plano</h3>
+  {% if c.plano_contratado or c.data_inicio %}
+  <div class="itens">
+    {{ linha('Plano contratado', c.plano_contratado) }}
+    {% if c.plano_info %}
+      {{ linha('Setup (tabela)', brl(c.plano_info.setup)) }}
+      {{ linha('Mensalidade (tabela)', brl(c.plano_info.mensalidade)) }}
+    {% endif %}
+    {{ linha('Data de início (kickoff)', c.data_inicio.strftime('%d/%m/%Y') if c.data_inicio else None) }}
+    {{ linha('Fim da fidelidade', c.fim_fidelidade.strftime('%d/%m/%Y') if c.fim_fidelidade else None) }}
+  </div>
+  <p class="nota">Preço é de tabela. Qualquer desconto/parcelamento depende de aprovação do André.</p>
+  {% else %}
+  <p class="texto-longo">Ainda sem contrato. Preencha o plano e a data de início quando o cliente fechar.</p>
+  {% endif %}
 </section>
 
 <section class="cartao">

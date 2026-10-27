@@ -72,6 +72,10 @@ class Cliente(db.Model):
     fonte_faturamento = db.Column(db.String(30), nullable=True)
     gatilho = db.Column(db.Text, nullable=True)                  # sinais observados
 
+    # --- Contrato / Plano (preenchido quando o cliente fecha) ---
+    plano_contratado = db.Column(db.String(60), nullable=True)
+    data_inicio = db.Column(db.Date, nullable=True)  # data do kickoff
+
     # --- Gestão comercial ---
     responsavel = db.Column(db.String(40), nullable=True)
     status = db.Column(db.String(40), nullable=False, default="Pesquisa", index=True)
@@ -108,6 +112,7 @@ class Cliente(db.Model):
         "cidade", "segmento", "origem", "triagem_ifood", "nota_ifood",
         "avaliacoes_ifood", "rede_independencia", "unidades", "marcas",
         "canais", "faturamento_estimado", "fonte_faturamento", "gatilho",
+        "plano_contratado", "data_inicio",
         "responsavel", "status", "observacoes",
     )
 
@@ -115,3 +120,27 @@ class Cliente(db.Model):
         """Devolve os campos do formulário como dicionário, para pré-preencher
         o formulário de edição."""
         return {c: getattr(self, c) for c in self.CAMPOS_FORM}
+
+    @property
+    def eh_cliente_ativo(self) -> bool:
+        """Verdadeiro quando a conta já virou cliente ativo (recebido pela
+        Operação), ou seja, status 'Liberado p/ Setup'."""
+        from app import domain
+        return self.status == domain.STATUS_CLIENTE_ATIVO
+
+    @property
+    def plano_info(self) -> dict | None:
+        """Dados do plano contratado (setup, mensalidade, fidelidade), puxados
+        da tabela de preços."""
+        from app import domain
+        return domain.produto_por_nome(self.plano_contratado)
+
+    @property
+    def fim_fidelidade(self):
+        """Data em que acaba a fidelidade (início + meses do plano, padrão 6)."""
+        if not self.data_inicio:
+            return None
+        from app import domain
+        info = self.plano_info
+        meses = info["fidelidade_meses"] if info else 6
+        return domain.somar_meses(self.data_inicio, meses)

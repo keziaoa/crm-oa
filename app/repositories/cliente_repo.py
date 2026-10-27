@@ -12,10 +12,18 @@ from app.models.cliente import Cliente, so_digitos
 class ClienteRepository:
     # ----- Leitura -----
     def listar(self, q=None, status=None, prioridade=None, cidade=None,
-               incluir_arquivadas=False) -> list[Cliente]:
+               incluir_arquivadas=False, visao=None) -> list[Cliente]:
+        from app import domain
         query = Cliente.query
         if not incluir_arquivadas:
             query = query.filter(Cliente.arquivado.is_(False))
+        # Visão rápida: clientes ativos x contas ainda em prospecção.
+        if visao == "ativos":
+            query = query.filter(Cliente.status == domain.STATUS_CLIENTE_ATIVO)
+        elif visao == "prospeccao":
+            em_prospeccao = [n for _, n, _, t in domain.STATUS_FUNIL
+                             if t == "pipeline" and n != domain.STATUS_CLIENTE_ATIVO]
+            query = query.filter(Cliente.status.in_(em_prospeccao))
         if q:
             like = f"%{q.strip()}%"
             query = query.filter(db.or_(
@@ -36,6 +44,13 @@ class ClienteRepository:
         if not incluir_arquivadas:
             query = query.filter(Cliente.arquivado.is_(False))
         return query.count()
+
+    def contar_ativos(self) -> int:
+        from app import domain
+        return (Cliente.query
+                .filter(Cliente.arquivado.is_(False),
+                        Cliente.status == domain.STATUS_CLIENTE_ATIVO)
+                .count())
 
     def cidades(self) -> list[str]:
         """Cidades distintas já cadastradas (para o filtro)."""

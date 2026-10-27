@@ -170,3 +170,17 @@ th { color: var(--verde-escuro); font-size: 13px; }
 .texto-longo { background: var(--areia); padding: 10px 12px; border-radius: 8px; margin-top: 12px; }
 .vazio { text-align: center; }
 .vazio .botao { margin-top: 10px; }
+
+/* ===== Contrato / Plano + visão de clientes ativos ===== */
+.badge-ativo { background: #2f5a2c; color: #fff; }
+.atalhos-visao { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+.atalho { text-decoration: none; font-size: 13px; font-weight: 600; color: var(--verde-escuro);
+  background: #fff; border: 1px solid rgba(14,66,58,.2); padding: 6px 14px; border-radius: 20px; }
+.atalho:hover { background: var(--areia); }
+.atalho-on { background: var(--verde-escuro); color: var(--areia); border-color: var(--verde-escuro); }
+.contador-mini { background: var(--dourado); color: var(--quase-preto); border-radius: 20px;
+  padding: 0 7px; font-size: 11px; margin-left: 4px; }
+.atalho-on .contador-mini { background: var(--areia); }
+.legenda-leve { font-weight: 400; font-size: 12px; opacity: .6; }
+.dica-plano { justify-content: flex-end; }
+.dica-plano small { font-weight: 400; color: var(--quase-preto); opacity: .7; }

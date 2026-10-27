@@ -192,6 +192,14 @@ Comercial — qualquer desconto/parcelamento/escopo extra exige **aprovação do
   Observações: a **Prioridade** nasce "Pendente" e será calculada na Fase 4;
   os **contatos financeiro/operacional** existem no banco e serão preenchidos
   nas fases de Diagnóstico/Gate.
+- [x] **Fase 1.1 — Contrato/Plano e Clientes ativos (CONCLUÍDA).** A conta passou
+  a guardar **plano contratado** e **data de início (kickoff)**; a ficha mostra o
+  **preço de tabela** do plano e o **fim da fidelidade** (início + meses do plano,
+  padrão 6), e um selo **"Cliente ativo"** quando o status é "Liberado p/ Setup".
+  Na tela de Contas há atalhos **Todas / Em prospecção / Clientes ativos**. O
+  acompanhamento completo do cliente ativo (marcos de pós-venda) segue na Fase 8.
+  Mini-migração automática para SQLite (`_garantir_colunas_sqlite`) adiciona
+  colunas novas **sem apagar dados** do banco local.
 - [ ] **Fase 2 — Importação da Base.** Carregar as 37 contas da triagem iFood
   da planilha para o banco.
 - [ ] **Fase 3 — Funil (Kanban).** Mover contas pelos 17 status; validar as
@@ -239,10 +247,11 @@ exija refazer o sistema.
 - No dia da integração, se o cohab-control expuser clientes por uma **API** em
   vez de uma tabela, basta reescrever `ClienteRepository` — o resto do sistema
   (telas, regras) continua igual.
-- Evolução do esquema do banco: enquanto o banco local estava **vazio** (Fase 1),
-  qualquer mudança de colunas foi feita recriando o SQLite. A partir do momento
-  em que houver dados reais a preservar (a importação das 37 contas, na Fase 2),
-  será adotado o **Flask-Migrate/Alembic** para alterar o banco sem perder dados.
+- Evolução do esquema do banco: para o **SQLite local** há uma mini-migração
+  automática (`app/__init__.py` → `_garantir_colunas_sqlite`) que adiciona
+  colunas novas sem apagar dados — suficiente para o uso na máquina da usuária.
+  No **servidor (PostgreSQL)**, a evolução passará a ser feita com
+  **Flask-Migrate/Alembic** (a mini-migração é restrita ao SQLite).
 
 ---
 

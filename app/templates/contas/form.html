@@ -91,6 +91,22 @@
   </fieldset>
 
   <fieldset>
+    <legend>Contrato / Plano <span class="legenda-leve">(preencher quando o cliente fechar)</span></legend>
+    <div class="grade-form">
+      <label class="campo">Plano contratado
+        <select name="plano_contratado">{{ opcoes(listas.produto, valores.get('plano_contratado')) }}</select>
+      </label>
+      <label class="campo">Data de início (kickoff)
+        <input type="date" name="data_inicio" value="{{ v(valores.get('data_inicio')) }}">
+      </label>
+      <div class="campo dica-plano">
+        <span>&nbsp;</span>
+        <small>O preço e o fim da fidelidade (6 meses) aparecem sozinhos na ficha da conta.</small>
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset>
     <legend>Gestão comercial</legend>
     <div class="grade-form">
       <label class="campo">Responsável

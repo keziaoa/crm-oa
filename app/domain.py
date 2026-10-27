@@ -253,3 +253,32 @@ REGRAS_PROPOSTA = [
     "Proposta só com escopo dentro dos 7 pilares.",
     "Qualquer desconto, parcelamento ou escopo extra = aprovação do André.",
 ]
+
+# Opções de plano que uma conta pode ter contratado (planos principais).
+PLANOS = ["ÔA Completo", "ÔA Meu Financeiro", "A definir"]
+
+# Status do funil em que a conta já é um CLIENTE ATIVO (recebido pela Operação).
+STATUS_CLIENTE_ATIVO = "Liberado p/ Setup"
+
+
+def produto_por_nome(nome: str | None) -> dict | None:
+    """Devolve os dados (setup, mensalidade, fidelidade) de um plano pelo nome."""
+    if not nome:
+        return None
+    for p in PRODUTOS:
+        if p["nome"] == nome:
+            return p
+    return None
+
+
+def somar_meses(data, meses: int):
+    """Soma 'meses' a uma data, respeitando o fim do mês (ex.: 31/01 + 1 mês
+    vira 28/02). Usado para calcular o fim da fidelidade a partir do início."""
+    import calendar
+    from datetime import date
+
+    total = data.month - 1 + meses
+    ano = data.year + total // 12
+    mes = total % 12 + 1
+    dia = min(data.day, calendar.monthrange(ano, mes)[1])
+    return date(ano, mes, dia)

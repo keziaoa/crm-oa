@@ -46,6 +46,18 @@ def _decimal(form, campo):
         return None
 
 
+def _data(form, campo):
+    """Lê uma data de um campo <input type=date> (formato AAAA-MM-DD)."""
+    from datetime import date
+    bruto = (form.get(campo) or "").strip()
+    if not bruto:
+        return None
+    try:
+        return date.fromisoformat(bruto)
+    except ValueError:
+        return None
+
+
 def _ler_form(form) -> dict:
     """Lê todos os campos do formulário e devolve um dicionário pronto para o
     modelo, já convertendo números."""
@@ -67,6 +79,8 @@ def _ler_form(form) -> dict:
         "faturamento_estimado": _inteiro(form, "faturamento_estimado"),
         "fonte_faturamento": _texto(form, "fonte_faturamento"),
         "gatilho": _texto(form, "gatilho"),
+        "plano_contratado": _texto(form, "plano_contratado"),
+        "data_inicio": _data(form, "data_inicio"),
         "responsavel": _texto(form, "responsavel"),
         "status": _texto(form, "status") or "Pesquisa",
         "observacoes": _texto(form, "observacoes"),
@@ -110,16 +124,19 @@ def lista():
     prioridade = request.args.get("prioridade", "").strip()
     cidade = request.args.get("cidade", "").strip()
     arquivadas = request.args.get("arquivadas") == "1"
+    visao = request.args.get("visao", "").strip()  # "", "ativos" ou "prospeccao"
 
     contas = clientes.listar(
         q=q or None, status=status or None, prioridade=prioridade or None,
         cidade=cidade or None, incluir_arquivadas=arquivadas,
+        visao=visao or None,
     )
     return render_template(
         "contas/lista.html",
         contas=contas,
         q=q, status=status, prioridade=prioridade, cidade=cidade,
-        arquivadas=arquivadas,
+        arquivadas=arquivadas, visao=visao,
+        total_ativos=clientes.contar_ativos(),
         status_opcoes=domain.STATUS_NOMES,
         prioridade_opcoes=domain.PRIORIDADES,
         cidades=clientes.cidades(),
