@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}{{ c.conta_id }} · {{ c.nome_fantasia }}{% endblock %}
+
+{% macro linha(rotulo, valor) %}
+  <div class="item"><span class="rotulo">{{ rotulo }}</span>
+    <span class="valor">{{ valor if (valor is not none and valor != '') else '—' }}</span></div>
+{% endmacro %}
+
+{% block conteudo %}
+<div class="cabecalho-pagina">
+  <div>
+    <p class="migalha"><a href="{{ url_for('contas.lista') }}">Contas</a> / {{ c.conta_id }}</p>
+    <h2>{{ c.nome_fantasia }}
+      {% if c.arquivado %}<span class="tag tag-arquivada">arquivada</span>{% endif %}
+    </h2>
+    <p>
+      <span class="badge badge-{{ status_tipo.get(c.status, 'pipeline') }}">{{ c.status }}</span>
+      <span class="prio prio-{{ c.prioridade|lower }}">Prioridade {{ c.prioridade }}</span>
+      <span class="fase-txt">{{ status_fase.get(c.status, '') }}</span>
+    </p>
+  </div>
+  <div class="acoes-topo">
+    <a class="botao botao-principal" href="{{ url_for('contas.editar', id=c.id) }}">Editar</a>
+    {% if c.arquivado %}
+      <form method="post" action="{{ url_for('contas.desarquivar', id=c.id) }}">
+        <button type="submit" class="botao">Reativar</button>
+      </form>
+    {% else %}
+      <form method="post" action="{{ url_for('contas.arquivar', id=c.id) }}"
+            onsubmit="return confirm('Arquivar esta conta? Ela sai da lista, mas continua guardada (nunca é apagada).');">
+        <button type="submit" class="botao botao-alerta">Arquivar</button>
+      </form>
+    {% endif %}
+  </div>
+</div>
+
+<section class="cartao">
+  <h3>Identificação</h3>
+  <div class="itens">
+    {{ linha('Conta ID', c.conta_id) }}
+    {{ linha('CNPJ', c.cnpj_formatado) }}
+    {{ linha('Razão social', c.razao_social) }}
+    {{ linha('Confiança da identificação', c.confianca_identificacao) }}
+    {{ linha('Cidade', c.cidade) }}
+    {{ linha('Segmento', c.segmento) }}
+  </div>
+</section>
+
+<section class="cartao">
+  <h3>Origem, estrutura e sinais de porte</h3>
+  <div class="itens">
+    {{ linha('Origem', c.origem) }}
+    {{ linha('Triagem iFood', c.triagem_ifood) }}
+    {{ linha('Nota iFood', c.nota_ifood) }}
+    {{ linha('Avaliações iFood', c.avaliacoes_ifood) }}
+    {{ linha('Rede / Independência', c.rede_independencia) }}
+    {{ linha('Unidades', c.unidades) }}
+    {{ linha('Marcas', c.marcas) }}
+    {{ linha('Canais', c.canais) }}
+    {{ linha('Faturamento estimado (R$/mês)', c.faturamento_estimado) }}
+    {{ linha('Fonte do faturamento', c.fonte_faturamento) }}
+  </div>
+  {% if c.gatilho %}<p class="texto-longo"><strong>Gatilho / sinais:</strong> {{ c.gatilho }}</p>{% endif %}
+</section>
+
+<section class="cartao">
+  <h3>Gestão comercial</h3>
+  <div class="itens">
+    {{ linha('Responsável', c.responsavel) }}
+    {{ linha('Status', c.status) }}
+    {{ linha('Prioridade', c.prioridade) }}
+  </div>
+  {% if c.observacoes %}<p class="texto-longo"><strong>Observações:</strong> {{ c.observacoes }}</p>{% endif %}
+</section>
+
+<p class="nota">
+  Criada em {{ c.criado_em.strftime('%d/%m/%Y %H:%M') if c.criado_em else '—' }} ·
+  Atualizada em {{ c.atualizado_em.strftime('%d/%m/%Y %H:%M') if c.atualizado_em else '—' }}
+</p>
+{% endblock %}

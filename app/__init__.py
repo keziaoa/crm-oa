@@ -19,7 +19,9 @@ def create_app(config_class=Config):
 
     # Registra as páginas do site.
     from app.routes.main import bp as main_bp
+    from app.routes.contas import bp as contas_bp
     app.register_blueprint(main_bp)
+    app.register_blueprint(contas_bp)
 
     # Na primeira vez, cria o arquivo do banco e as tabelas (ex.: clientes).
     with app.app_context():

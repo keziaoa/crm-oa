@@ -182,8 +182,16 @@ Comercial — qualquer desconto/parcelamento/escopo extra exige **aprovação do
 - [x] **Fase 0 — Fundação (CONCLUÍDA).** Estrutura Python/Flask/SQLite, regras
   de negócio em código (`domain.py`), modelo Cliente com CNPJ único, camada de
   repositórios, página inicial, git iniciado.
-- [ ] **Fase 1 — Cadastro de clientes.** Telas para criar/editar/listar contas
-  (Conta ID, CNPJ, razão social, contatos financeiro e operacional).
+- [x] **Fase 1 — Cadastro de contas (CONCLUÍDA).** Tela "Contas" com lista,
+  busca (nome/razão social/ID) e filtros por Status, Prioridade e Cidade;
+  formulário de Nova conta e de edição com todos os campos da Base de
+  Prospecção (identificação, origem/estrutura, gestão); listas suspensas vindas
+  de `domain.LISTAS`; página de detalhe; **Conta ID gerado automaticamente**
+  (CT-001...); **Arquivar/Reativar no lugar de apagar** (nada é excluído).
+  Validações: nome obrigatório, CNPJ com 14 dígitos e único.
+  Observações: a **Prioridade** nasce "Pendente" e será calculada na Fase 4;
+  os **contatos financeiro/operacional** existem no banco e serão preenchidos
+  nas fases de Diagnóstico/Gate.
 - [ ] **Fase 2 — Importação da Base.** Carregar as 37 contas da triagem iFood
   da planilha para o banco.
 - [ ] **Fase 3 — Funil (Kanban).** Mover contas pelos 17 status; validar as
@@ -231,8 +239,10 @@ exija refazer o sistema.
 - No dia da integração, se o cohab-control expuser clientes por uma **API** em
   vez de uma tabela, basta reescrever `ClienteRepository` — o resto do sistema
   (telas, regras) continua igual.
-- Para evoluir o esquema do banco sem perder dados, está previsto adotar
-  **Flask-Migrate/Alembic** quando a Fase 1 começar.
+- Evolução do esquema do banco: enquanto o banco local estava **vazio** (Fase 1),
+  qualquer mudança de colunas foi feita recriando o SQLite. A partir do momento
+  em que houver dados reais a preservar (a importação das 37 contas, na Fase 2),
+  será adotado o **Flask-Migrate/Alembic** para alterar o banco sem perder dados.
 
 ---
 

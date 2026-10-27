@@ -50,6 +50,49 @@ STATUS_FUNIL = [
 # Lista simples só com os nomes, na ordem — útil para menus suspensos.
 STATUS_NOMES = [nome for _, nome, _, _ in STATUS_FUNIL]
 
+# Agrupamento por tipo, para colorir/organizar as telas.
+STATUS_TIPO = {nome: tipo for _, nome, _, tipo in STATUS_FUNIL}
+STATUS_FASE = {nome: fase for _, nome, fase, _ in STATUS_FUNIL}
+
+# As letras de prioridade possíveis (Pendente = ainda não pontuada na Fase 4).
+PRIORIDADES = ["Pendente", "A", "B", "C", "D"]
+
+# ---------------------------------------------------------------------------
+# Listas suspensas — as MESMAS da aba "Listas" do kit (e algumas derivadas
+# diretamente da Base de Prospecção, marcadas abaixo). Fonte única usada pelos
+# formulários, para que as opções nunca saiam do combinado com o kit.
+# ---------------------------------------------------------------------------
+LISTAS = {
+    "segmento": ["Hamburgueria", "Hamburgueria Delivery",
+                 "Hamburgueria / Híbrido", "Pizzaria / Burger", "Outro"],
+    "origem": ["iFood", "Google Maps", "Indicação", "Rede do André",
+               "Instagram", "LinkedIn", "Pesquisa ativa", "Outro"],
+    # Derivada da coluna "Confiança da Identificação" da Base de Prospecção.
+    "confianca_identificacao": ["Alta", "Média", "Baixa", "Não localizado"],
+    # Derivada da coluna "Triagem iFood (A/B/C)" da Base.
+    "triagem_ifood": ["A", "B", "C"],
+    "rede_independencia": ["A verificar", "Independente",
+                           "Possível rede/multiunidade", "Multiunidade",
+                           "Rede / franquia", "Possível duplicidade"],
+    "fonte_faturamento": ["A investigar", "Estimado", "Confirmado"],
+    "responsavel": ["Kézia", "André"],
+    "status": STATUS_NOMES,
+    "prioridade": PRIORIDADES,
+    # Listas do kit usadas em fases futuras (mantidas aqui como fonte única):
+    "sim_nao": ["Sim", "Não"],
+    "produto": ["ÔA Completo", "ÔA Meu Financeiro", "A definir"],
+    "contato": ["D0", "D3", "D7", "D12"],
+    "gate": ["Sim", "Não", "Pendente"],
+    "marco": ["Pendente", "Agendado", "Realizado", "Não realizado"],
+    "saude": ["Verde (Saudável)", "Amarelo (Atenção)", "Vermelho (Risco)"],
+    "motivo": ["Fora de escopo (tesouraria/pagamentos)",
+               "Fora de escopo (outro serviço)",
+               "Porte/faturamento incompatível", "Rede / franquia",
+               "Duplicada (mesma empresa)", "Sem acesso ao decisor",
+               "Sem prioridade agora", "Preço", "Escolheu concorrente",
+               "Sem resposta na cadência", "Outro"],
+}
+
 # ---------------------------------------------------------------------------
 # As 5 notas de qualificação (cada uma de 0 a 2).
 # Aderência e Viabilidade são "eliminatórias": 0 em qualquer uma delas = D.

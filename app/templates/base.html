@@ -15,9 +15,23 @@
         <p class="sub">Respire. A gestão é com a gente.</p>
       </div>
     </div>
+    <nav class="menu">
+      <a href="{{ url_for('main.index') }}">Início</a>
+      <a href="{{ url_for('contas.lista') }}">Contas</a>
+    </nav>
   </header>
 
   <main class="conteudo">
+    {% with mensagens = get_flashed_messages(with_categories=true) %}
+      {% if mensagens %}
+        <div class="avisos">
+          {% for categoria, texto in mensagens %}
+            <div class="aviso aviso-{{ categoria }}">{{ texto }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
     {% block conteudo %}{% endblock %}
   </main>
 

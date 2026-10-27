@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}Contas · CRM Comercial ÔA{% endblock %}
+
+{% block conteudo %}
+<div class="cabecalho-pagina">
+  <h2>Contas</h2>
+  <a class="botao botao-principal" href="{{ url_for('contas.nova') }}">+ Nova conta</a>
+</div>
+
+<form class="filtros" method="get" action="{{ url_for('contas.lista') }}">
+  <input type="text" name="q" value="{{ q }}" placeholder="Buscar por nome, razão social ou ID…">
+
+  <select name="status">
+    <option value="">Status: todos</option>
+    {% for s in status_opcoes %}
+      <option value="{{ s }}" {{ 'selected' if s == status }}>{{ s }}</option>
+    {% endfor %}
+  </select>
+
+  <select name="prioridade">
+    <option value="">Prioridade: todas</option>
+    {% for p in prioridade_opcoes %}
+      <option value="{{ p }}" {{ 'selected' if p == prioridade }}>{{ p }}</option>
+    {% endfor %}
+  </select>
+
+  <select name="cidade">
+    <option value="">Cidade: todas</option>
+    {% for c in cidades %}
+      <option value="{{ c }}" {{ 'selected' if c == cidade }}>{{ c }}</option>
+    {% endfor %}
+  </select>
+
+  <label class="check">
+    <input type="checkbox" name="arquivadas" value="1" {{ 'checked' if arquivadas }}>
+    incluir arquivadas
+  </label>
+
+  <button type="submit" class="botao">Filtrar</button>
+  <a class="botao botao-limpo" href="{{ url_for('contas.lista') }}">Limpar</a>
+</form>
+
+<p class="resumo-lista">{{ contas|length }} conta(s) encontrada(s).</p>
+
+{% if contas %}
+<div class="tabela-rolavel">
+<table class="tabela-contas">
+  <thead>
+    <tr>
+      <th>ID</th><th>Empresa / Marca</th><th>Cidade</th><th>Status</th>
+      <th>Prioridade</th><th>Responsável</th><th>Origem</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for c in contas %}
+    <tr class="{{ 'linha-arquivada' if c.arquivado }}">
+      <td><a href="{{ url_for('contas.detalhe', id=c.id) }}">{{ c.conta_id }}</a></td>
+      <td>
+        <a href="{{ url_for('contas.detalhe', id=c.id) }}">{{ c.nome_fantasia }}</a>
+        {% if c.arquivado %}<span class="tag tag-arquivada">arquivada</span>{% endif %}
+      </td>
+      <td>{{ c.cidade or '—' }}</td>
+      <td><span class="badge badge-{{ status_tipo.get(c.status, 'pipeline') }}">{{ c.status }}</span></td>
+      <td><span class="prio prio-{{ c.prioridade|lower }}">{{ c.prioridade }}</span></td>
+      <td>{{ c.responsavel or '—' }}</td>
+      <td>{{ c.origem or '—' }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% else %}
+<div class="cartao vazio">
+  <p>Nenhuma conta por aqui ainda.</p>
+  <a class="botao botao-principal" href="{{ url_for('contas.nova') }}">Cadastrar a primeira conta</a>
+</div>
+{% endif %}
+{% endblock %}

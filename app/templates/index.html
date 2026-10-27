@@ -2,14 +2,13 @@
 
 {% block conteudo %}
 <section class="cartao destaque">
-  <h2>✓ Fase 0 concluída — o sistema está no ar</h2>
+  <h2>✓ Fase 1 concluída — cadastro de contas no ar</h2>
   <p>
-    Este é o esqueleto do CRM Comercial da ÔA. Ainda não há telas de uso
-    (cadastro, funil, qualificação) — elas chegam nas próximas fases. Por
-    enquanto, as <strong>regras de negócio</strong> já estão configuradas e
-    o <strong>banco de dados</strong> está pronto.
+    Já é possível cadastrar, buscar, filtrar, editar e arquivar contas. As
+    próximas fases trazem o funil (Kanban), a qualificação e a cadência.
   </p>
-  <p class="contador">Clientes cadastrados no banco: <strong>{{ total_clientes }}</strong></p>
+  <p class="contador">Contas ativas no banco: <strong>{{ total_clientes }}</strong></p>
+  <p><a class="botao botao-principal" href="{{ url_for('contas.lista') }}">Abrir Contas</a></p>
 </section>
 
 <section class="cartao">

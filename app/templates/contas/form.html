@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Nova conta' if modo == 'nova' else 'Editar conta' }} · CRM Comercial ÔA{% endblock %}
+
+{# Mostra valor em branco quando for None (em vez de "None") #}
+{% macro v(x) %}{{ '' if x is none else x }}{% endmacro %}
+
+{# Monta as opções de um <select> marcando a atual #}
+{% macro opcoes(lista, atual) %}
+  <option value="">—</option>
+  {% for o in lista %}
+    <option value="{{ o }}" {{ 'selected' if o|string == atual|string }}>{{ o }}</option>
+  {% endfor %}
+{% endmacro %}
+
+{% block conteudo %}
+<div class="cabecalho-pagina">
+  <h2>
+    {% if modo == 'nova' %}Nova conta{% else %}Editar {{ cliente.conta_id }}{% endif %}
+  </h2>
+  <a class="botao botao-limpo" href="{{ url_for('contas.lista') }}">Voltar</a>
+</div>
+
+{% if modo == 'nova' and proximo_id %}
+  <p class="nota">O Conta ID será gerado automaticamente: <strong>{{ proximo_id }}</strong>.</p>
+{% endif %}
+
+<form method="post" class="form-conta"
+      action="{% if modo == 'nova' %}{{ url_for('contas.nova') }}{% else %}{{ url_for('contas.editar', id=cliente.id) }}{% endif %}">
+
+  <fieldset>
+    <legend>Identificação</legend>
+    <div class="grade-form">
+      <label class="campo largo">Empresa / Marca *
+        <input type="text" name="nome_fantasia" required value="{{ v(valores.get('nome_fantasia')) }}">
+      </label>
+      <label class="campo">CNPJ
+        <input type="text" name="cnpj" placeholder="00.000.000/0000-00" value="{{ v(valores.get('cnpj')) }}">
+      </label>
+      <label class="campo largo">Razão social
+        <input type="text" name="razao_social" value="{{ v(valores.get('razao_social')) }}">
+      </label>
+      <label class="campo">Confiança da identificação
+        <select name="confianca_identificacao">{{ opcoes(listas.confianca_identificacao, valores.get('confianca_identificacao')) }}</select>
+      </label>
+      <label class="campo">Cidade
+        <input type="text" name="cidade" value="{{ v(valores.get('cidade')) }}">
+      </label>
+      <label class="campo">Segmento
+        <select name="segmento">{{ opcoes(listas.segmento, valores.get('segmento')) }}</select>
+      </label>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Origem, estrutura e sinais de porte</legend>
+    <div class="grade-form">
+      <label class="campo">Origem
+        <select name="origem">{{ opcoes(listas.origem, valores.get('origem')) }}</select>
+      </label>
+      <label class="campo">Triagem iFood (A/B/C)
+        <select name="triagem_ifood">{{ opcoes(listas.triagem_ifood, valores.get('triagem_ifood')) }}</select>
+      </label>
+      <label class="campo">Nota iFood
+        <input type="text" name="nota_ifood" placeholder="ex.: 4.9" value="{{ v(valores.get('nota_ifood')) }}">
+      </label>
+      <label class="campo">Avaliações iFood
+        <input type="text" name="avaliacoes_ifood" placeholder="ex.: 1439" value="{{ v(valores.get('avaliacoes_ifood')) }}">
+      </label>
+      <label class="campo">Rede / Independência
+        <select name="rede_independencia">{{ opcoes(listas.rede_independencia, valores.get('rede_independencia')) }}</select>
+      </label>
+      <label class="campo">Unidades
+        <input type="text" name="unidades" placeholder="ex.: 1" value="{{ v(valores.get('unidades')) }}">
+      </label>
+      <label class="campo">Marcas
+        <input type="text" name="marcas" placeholder="ex.: 2" value="{{ v(valores.get('marcas')) }}">
+      </label>
+      <label class="campo largo">Canais
+        <input type="text" name="canais" placeholder="ex.: delivery próprio + iFood" value="{{ v(valores.get('canais')) }}">
+      </label>
+      <label class="campo">Faturamento estimado (R$/mês)
+        <input type="text" name="faturamento_estimado" placeholder="ex.: 180000" value="{{ v(valores.get('faturamento_estimado')) }}">
+      </label>
+      <label class="campo">Fonte do faturamento
+        <select name="fonte_faturamento">{{ opcoes(listas.fonte_faturamento, valores.get('fonte_faturamento')) }}</select>
+      </label>
+      <label class="campo largo">Gatilho / sinais observados
+        <textarea name="gatilho" rows="2">{{ v(valores.get('gatilho')) }}</textarea>
+      </label>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Gestão comercial</legend>
+    <div class="grade-form">
+      <label class="campo">Responsável
+        <select name="responsavel">{{ opcoes(listas.responsavel, valores.get('responsavel')) }}</select>
+      </label>
+      <label class="campo">Status no funil
+        <select name="status">{{ opcoes(listas.status, valores.get('status') or 'Pesquisa') }}</select>
+      </label>
+      <label class="campo largo largo-total">Observações
+        <textarea name="observacoes" rows="3">{{ v(valores.get('observacoes')) }}</textarea>
+      </label>
+    </div>
+  </fieldset>
+
+  <div class="acoes-form">
+    <button type="submit" class="botao botao-principal">
+      {{ 'Criar conta' if modo == 'nova' else 'Salvar alterações' }}
+    </button>
+    <a class="botao botao-limpo"
+       href="{% if modo == 'nova' %}{{ url_for('contas.lista') }}{% else %}{{ url_for('contas.detalhe', id=cliente.id) }}{% endif %}">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

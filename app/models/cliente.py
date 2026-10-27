@@ -1,11 +1,13 @@
 """
-Modelo Cliente — a conta comercial (uma hamburgueria).
+Modelo Cliente — a conta comercial (uma hamburgueria/pizzaria).
+
+Os campos espelham a aba "Base de Prospecção" do Master Kit Comercial.
 
 Decisões pensando na integração futura com o cohab-control:
 - O CNPJ é o identificador único "de verdade" do cliente (chave de negócio),
   além do Conta ID legível (CT-001, CT-002...).
 - CNPJ é guardado SÓ com números (14 dígitos), sem pontos/barra/traço, para
-  casar com o cohab-control sem ambiguidade. Há um campo auxiliar para exibir
+  casar com o cohab-control sem ambiguidade. Há um método para exibir
   formatado, mas o que vale para buscas e integração é o campo só-dígitos.
 - Razão social e contatos (financeiro e operacional) ficam em campos próprios
   e padronizados, não misturados num campo de texto livre.
@@ -42,27 +44,53 @@ class Cliente(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
     # --- Identificação ---
-    # Conta ID legível usado no dia a dia (CT-001). Único.
+    # Conta ID legível usado no dia a dia (CT-001). Gerado automaticamente.
     conta_id = db.Column(db.String(20), unique=True, nullable=False, index=True)
+
+    nome_fantasia = db.Column(db.String(255), nullable=False)  # Empresa / Marca
 
     # CNPJ só com dígitos (14). Identificador único de negócio e chave de
     # integração com o cohab-control. Pode ser nulo enquanto a conta ainda
-    # está em pesquisa (CNPJ a confirmar), mas quando preenchido é único.
+    # está em pesquisa; quando preenchido, é único.
     cnpj = db.Column(db.String(14), unique=True, nullable=True, index=True)
 
     razao_social = db.Column(db.String(255), nullable=True)
-    nome_fantasia = db.Column(db.String(255), nullable=False)  # Empresa / Marca
+    confianca_identificacao = db.Column(db.String(30), nullable=True)
+    cidade = db.Column(db.String(120), nullable=True, index=True)
+    segmento = db.Column(db.String(60), nullable=True)
 
-    # --- Contatos padronizados ---
+    # --- Origem, estrutura e sinais de porte ---
+    origem = db.Column(db.String(40), nullable=True)
+    triagem_ifood = db.Column(db.String(1), nullable=True)      # A / B / C
+    nota_ifood = db.Column(db.Float, nullable=True)             # ex.: 4.9
+    avaliacoes_ifood = db.Column(db.Integer, nullable=True)     # ex.: 1439
+    rede_independencia = db.Column(db.String(40), nullable=True)
+    unidades = db.Column(db.Integer, nullable=True)
+    marcas = db.Column(db.Integer, nullable=True)
+    canais = db.Column(db.String(255), nullable=True)
+    faturamento_estimado = db.Column(db.Integer, nullable=True)  # R$/mês
+    fonte_faturamento = db.Column(db.String(30), nullable=True)
+    gatilho = db.Column(db.Text, nullable=True)                  # sinais observados
+
+    # --- Gestão comercial ---
+    responsavel = db.Column(db.String(40), nullable=True)
+    status = db.Column(db.String(40), nullable=False, default="Pesquisa", index=True)
+    # Prioridade (A/B/C/D) nasce "Pendente" e é calculada na Fase 4 a partir
+    # das 5 notas. Guardamos o campo desde já para o filtro da tela de Contas.
+    prioridade = db.Column(db.String(12), nullable=False, default="Pendente", index=True)
+    observacoes = db.Column(db.Text, nullable=True)
+
+    # --- Contatos padronizados (preenchidos em fases futuras: Gate item 4) ---
     contato_financeiro_nome = db.Column(db.String(255), nullable=True)
     contato_financeiro_email = db.Column(db.String(255), nullable=True)
     contato_financeiro_telefone = db.Column(db.String(20), nullable=True)
-
     contato_operacional_nome = db.Column(db.String(255), nullable=True)
     contato_operacional_email = db.Column(db.String(255), nullable=True)
     contato_operacional_telefone = db.Column(db.String(20), nullable=True)
 
     # --- Controle ---
+    # Nunca apagamos uma conta: marcamos como arquivada.
+    arquivado = db.Column(db.Boolean, nullable=False, default=False, index=True)
     criado_em = db.Column(db.DateTime(timezone=True), default=_agora)
     atualizado_em = db.Column(db.DateTime(timezone=True), default=_agora,
                               onupdate=_agora)
@@ -73,3 +101,17 @@ class Cliente(db.Model):
     @property
     def cnpj_formatado(self) -> str | None:
         return formatar_cnpj(self.cnpj)
+
+    # Campos que os formulários preenchem (nomes iguais aos dos inputs no HTML).
+    CAMPOS_FORM = (
+        "nome_fantasia", "cnpj", "razao_social", "confianca_identificacao",
+        "cidade", "segmento", "origem", "triagem_ifood", "nota_ifood",
+        "avaliacoes_ifood", "rede_independencia", "unidades", "marcas",
+        "canais", "faturamento_estimado", "fonte_faturamento", "gatilho",
+        "responsavel", "status", "observacoes",
+    )
+
+    def para_dict(self) -> dict:
+        """Devolve os campos do formulário como dicionário, para pré-preencher
+        o formulário de edição."""
+        return {c: getattr(self, c) for c in self.CAMPOS_FORM}
