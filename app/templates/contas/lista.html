@@ -4,7 +4,10 @@
 {% block conteudo %}
 <div class="cabecalho-pagina">
   <h2>Contas</h2>
-  <a class="botao botao-principal" href="{{ url_for('contas.nova') }}">+ Nova conta</a>
+  <div class="acoes-topo">
+    <a class="botao" href="{{ url_for('contas.importar') }}">Importar contas</a>
+    <a class="botao botao-principal" href="{{ url_for('contas.nova') }}">+ Nova conta</a>
+  </div>
 </div>
 
 <div class="atalhos-visao">

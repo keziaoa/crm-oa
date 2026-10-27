@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Importar contas · CRM Comercial ÔA{% endblock %}
+
+{% block conteudo %}
+<div class="cabecalho-pagina">
+  <h2>Importar contas iniciais</h2>
+  <a class="botao botao-limpo" href="{{ url_for('contas.lista') }}">Voltar</a>
+</div>
+
+<section class="cartao">
+  <p>
+    Isto traz para o sistema as <strong>{{ disponiveis }} contas da triagem iFood</strong>
+    (CT-001 a CT-0{{ '%02d'|format(disponiveis) }}) do Master Kit Comercial, com tudo o que
+    já foi pesquisado: status no funil, dados do decisor, sinais de porte e o histórico.
+  </p>
+  <ul>
+    <li>É <strong>seguro</strong>: se você clicar duas vezes, não duplica — contas que já
+      existirem (mesmo Conta ID ou CNPJ) são puladas.</li>
+    <li>Depois de importar, você edita e trabalha as contas normalmente.</li>
+  </ul>
+  <p class="nota">Contas atualmente no banco (incluindo arquivadas): <strong>{{ total_atual }}</strong></p>
+
+  <form method="post" action="{{ url_for('contas.importar') }}">
+    <button type="submit" class="botao botao-principal">Importar as {{ disponiveis }} contas</button>
+  </form>
+</section>
+{% endblock %}

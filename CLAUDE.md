@@ -200,8 +200,15 @@ Comercial — qualquer desconto/parcelamento/escopo extra exige **aprovação do
   acompanhamento completo do cliente ativo (marcos de pós-venda) segue na Fase 8.
   Mini-migração automática para SQLite (`_garantir_colunas_sqlite`) adiciona
   colunas novas **sem apagar dados** do banco local.
-- [ ] **Fase 2 — Importação da Base.** Carregar as 37 contas da triagem iFood
-  da planilha para o banco.
+- [x] **Fase 2 — Importação da Base (CONCLUÍDA).** Botão "Importar contas" que
+  carrega as **37 contas da triagem iFood** (CT-001 a CT-037) do kit, com status
+  no funil, responsável, sinais de porte, **dados do decisor** (nome, cargo,
+  telefone, Instagram, e-mail), **próxima ação** e **histórico**. Importação
+  **idempotente** (não duplica: pula Conta ID ou CNPJ já existentes). Os dados
+  foram extraídos uma vez para `app/data/contas_iniciais.json`, então a
+  importação é um clique e não depende do Excel. O modelo ganhou os campos do
+  **decisor** e de **próxima ação** (a mini-migração SQLite os adiciona sem
+  apagar dados). Próximo Conta ID gerado continua de CT-038.
 - [ ] **Fase 3 — Funil (Kanban).** Mover contas pelos 17 status; validar as
   transições permitidas.
 - [ ] **Fase 4 — Qualificação.** Registrar as 5 notas e calcular A/B/C/D

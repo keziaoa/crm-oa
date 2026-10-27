@@ -68,6 +68,18 @@
 </section>
 
 <section class="cartao">
+  <h3>Contato do decisor</h3>
+  <div class="itens">
+    {{ linha('Nome do decisor', c.nome_decisor) }}
+    {{ linha('Cargo / função', c.cargo_decisor) }}
+    {{ linha('Decisor confirmado?', c.decisor_confirmado) }}
+    {{ linha('Telefone / WhatsApp', c.telefone_decisor) }}
+    {{ linha('Instagram / site', c.instagram_site) }}
+    {{ linha('E-mail', c.email_decisor) }}
+  </div>
+</section>
+
+<section class="cartao">
   <h3>Contrato / Plano</h3>
   {% if c.plano_contratado or c.data_inicio %}
   <div class="itens">
@@ -92,7 +104,8 @@
     {{ linha('Status', c.status) }}
     {{ linha('Prioridade', c.prioridade) }}
   </div>
-  {% if c.observacoes %}<p class="texto-longo"><strong>Observações:</strong> {{ c.observacoes }}</p>{% endif %}
+  {% if c.proxima_acao %}<p class="texto-longo"><strong>Próxima ação:</strong> {{ c.proxima_acao }}</p>{% endif %}
+  {% if c.observacoes %}<p class="texto-longo"><strong>Observações / histórico:</strong> {{ c.observacoes }}</p>{% endif %}
 </section>
 
 <p class="nota">

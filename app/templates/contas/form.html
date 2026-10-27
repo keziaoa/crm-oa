@@ -91,6 +91,30 @@
   </fieldset>
 
   <fieldset>
+    <legend>Contato do decisor</legend>
+    <div class="grade-form">
+      <label class="campo">Nome do decisor
+        <input type="text" name="nome_decisor" value="{{ v(valores.get('nome_decisor')) }}">
+      </label>
+      <label class="campo">Cargo / função
+        <input type="text" name="cargo_decisor" value="{{ v(valores.get('cargo_decisor')) }}">
+      </label>
+      <label class="campo">Decisor confirmado?
+        <select name="decisor_confirmado">{{ opcoes(listas.sim_nao, valores.get('decisor_confirmado')) }}</select>
+      </label>
+      <label class="campo">Telefone / WhatsApp
+        <input type="text" name="telefone_decisor" value="{{ v(valores.get('telefone_decisor')) }}">
+      </label>
+      <label class="campo">Instagram / site
+        <input type="text" name="instagram_site" value="{{ v(valores.get('instagram_site')) }}">
+      </label>
+      <label class="campo">E-mail
+        <input type="text" name="email_decisor" value="{{ v(valores.get('email_decisor')) }}">
+      </label>
+    </div>
+  </fieldset>
+
+  <fieldset>
     <legend>Contrato / Plano <span class="legenda-leve">(preencher quando o cliente fechar)</span></legend>
     <div class="grade-form">
       <label class="campo">Plano contratado
@@ -115,7 +139,10 @@
       <label class="campo">Status no funil
         <select name="status">{{ opcoes(listas.status, valores.get('status') or 'Pesquisa') }}</select>
       </label>
-      <label class="campo largo largo-total">Observações
+      <label class="campo largo largo-total">Próxima ação
+        <input type="text" name="proxima_acao" value="{{ v(valores.get('proxima_acao')) }}">
+      </label>
+      <label class="campo largo largo-total">Observações / histórico
         <textarea name="observacoes" rows="3">{{ v(valores.get('observacoes')) }}</textarea>
       </label>
     </div>

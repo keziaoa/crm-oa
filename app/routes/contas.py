@@ -15,6 +15,7 @@ from flask import (Blueprint, abort, flash, redirect, render_template,
                    request, url_for)
 
 from app import domain
+from app.importacao import carregar_contas_iniciais, importar_contas_iniciais
 from app.models.cliente import Cliente, so_digitos
 from app.repositories import clientes
 
@@ -79,10 +80,17 @@ def _ler_form(form) -> dict:
         "faturamento_estimado": _inteiro(form, "faturamento_estimado"),
         "fonte_faturamento": _texto(form, "fonte_faturamento"),
         "gatilho": _texto(form, "gatilho"),
+        "nome_decisor": _texto(form, "nome_decisor"),
+        "cargo_decisor": _texto(form, "cargo_decisor"),
+        "decisor_confirmado": _texto(form, "decisor_confirmado"),
+        "telefone_decisor": _texto(form, "telefone_decisor"),
+        "instagram_site": _texto(form, "instagram_site"),
+        "email_decisor": _texto(form, "email_decisor"),
         "plano_contratado": _texto(form, "plano_contratado"),
         "data_inicio": _data(form, "data_inicio"),
         "responsavel": _texto(form, "responsavel"),
         "status": _texto(form, "status") or "Pesquisa",
+        "proxima_acao": _texto(form, "proxima_acao"),
         "observacoes": _texto(form, "observacoes"),
     }
 
@@ -228,3 +236,25 @@ def desarquivar(id):
     clientes.desarquivar(cliente)
     flash(f"Conta {cliente.conta_id} reativada.", "ok")
     return redirect(url_for("contas.detalhe", id=cliente.id))
+
+
+# ----------------------------------------------------------------------------
+# Importar as contas iniciais (as 37 da triagem iFood do kit)
+# ----------------------------------------------------------------------------
+@bp.route("/importar", methods=["GET", "POST"])
+def importar():
+    if request.method == "POST":
+        resumo = importar_contas_iniciais()
+        if resumo["importadas"]:
+            flash(f"{resumo['importadas']} conta(s) importada(s) com sucesso.", "ok")
+        if resumo["puladas"]:
+            flash(f"{resumo['puladas']} conta(s) já existiam e foram puladas "
+                  f"(não duplicamos nada).", "ok")
+        if not resumo["importadas"] and not resumo["puladas"]:
+            flash("Nada para importar.", "ok")
+        return redirect(url_for("contas.lista"))
+
+    disponiveis = len(carregar_contas_iniciais())
+    return render_template("contas/importar.html",
+                           disponiveis=disponiveis,
+                           total_atual=clientes.contar(incluir_arquivadas=True))

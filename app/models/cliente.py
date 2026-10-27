@@ -72,6 +72,14 @@ class Cliente(db.Model):
     fonte_faturamento = db.Column(db.String(30), nullable=True)
     gatilho = db.Column(db.Text, nullable=True)                  # sinais observados
 
+    # --- Contato do decisor (dono/sócio) ---
+    nome_decisor = db.Column(db.String(255), nullable=True)
+    cargo_decisor = db.Column(db.String(120), nullable=True)
+    decisor_confirmado = db.Column(db.String(10), nullable=True)   # Sim / Não
+    telefone_decisor = db.Column(db.String(40), nullable=True)
+    instagram_site = db.Column(db.String(255), nullable=True)
+    email_decisor = db.Column(db.String(255), nullable=True)
+
     # --- Contrato / Plano (preenchido quando o cliente fecha) ---
     plano_contratado = db.Column(db.String(60), nullable=True)
     data_inicio = db.Column(db.Date, nullable=True)  # data do kickoff
@@ -79,6 +87,7 @@ class Cliente(db.Model):
     # --- Gestão comercial ---
     responsavel = db.Column(db.String(40), nullable=True)
     status = db.Column(db.String(40), nullable=False, default="Pesquisa", index=True)
+    proxima_acao = db.Column(db.Text, nullable=True)
     # Prioridade (A/B/C/D) nasce "Pendente" e é calculada na Fase 4 a partir
     # das 5 notas. Guardamos o campo desde já para o filtro da tela de Contas.
     prioridade = db.Column(db.String(12), nullable=False, default="Pendente", index=True)
@@ -112,8 +121,10 @@ class Cliente(db.Model):
         "cidade", "segmento", "origem", "triagem_ifood", "nota_ifood",
         "avaliacoes_ifood", "rede_independencia", "unidades", "marcas",
         "canais", "faturamento_estimado", "fonte_faturamento", "gatilho",
+        "nome_decisor", "cargo_decisor", "decisor_confirmado",
+        "telefone_decisor", "instagram_site", "email_decisor",
         "plano_contratado", "data_inicio",
-        "responsavel", "status", "observacoes",
+        "responsavel", "status", "proxima_acao", "observacoes",
     )
 
     def para_dict(self) -> dict:
