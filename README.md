@@ -3,23 +3,21 @@
 Sistema web que roda **só no seu computador** (localhost) para organizar a
 prospecção e a venda da ÔA Gestão Especializada para hamburguerias.
 
-## Como abrir o sistema (passo a passo)
+## Como abrir o sistema
 
-1. Abra o **Terminal** e entre na pasta do projeto:
-   ```bash
-   cd crm-oa
-   ```
-2. Ligue o "ambiente" do projeto (onde o Flask está instalado):
-   - **Linux ou Mac:** `source .venv/bin/activate`
-   - **Windows:** `.venv\Scripts\activate`
-3. Inicie o sistema:
-   ```bash
-   python run.py
-   ```
-4. Abra o navegador (Chrome, Edge...) e acesse:
-   **http://localhost:5000**
+### Windows — jeito fácil (duplo-clique)
+1. Instale o Python uma única vez: https://www.python.org/downloads/
+   (na instalação, marque **"Add Python to PATH"**).
+2. Dê **duplo-clique** no arquivo **`iniciar.bat`** dentro da pasta `crm-oa`.
+   - Na primeira vez ele prepara tudo sozinho (pode levar 1–2 minutos).
+3. Abra o navegador (Chrome, Edge...) em **http://localhost:5000**.
+4. Para desligar, feche a janela preta ou aperte **Ctrl + C**.
 
-Para desligar o sistema, volte ao Terminal e aperte **Ctrl + C**.
+### Pelo Terminal (Windows, Mac ou Linux)
+1. Entre na pasta do projeto: `cd crm-oa`
+2. Ligue o "ambiente": `.venv\Scripts\activate` (Windows) ou `source .venv/bin/activate` (Mac/Linux)
+3. Inicie: `python run.py`
+4. Abra **http://localhost:5000** no navegador.
 
 ## Primeira vez (só se o Flask ainda não estiver instalado)
 
