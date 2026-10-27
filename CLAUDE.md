@@ -26,11 +26,14 @@ operacional da ÔA) — ver seção "Integração futura com o cohab-control".
 
 ## 2. ICP — Cliente ideal
 
-- **Segmento:** hamburguerias **independentes** (1 loja, 1 a 3 marcas).
+- **Segmento:** hamburguerias e **pizzarias independentes**, inclusive com
+  **2+ unidades** (multiunidade), com 1 a 3 marcas.
 - **Faturamento:** de **R$ 100 mil a R$ 500 mil por mês** (decisão P1, 26/10/2026).
 - Redes, franquias e duplicidades **não** entram no ICP.
-- Multiunidade: enquanto a decisão P4 estiver em aberto, conta multiunidade
-  recebe **Aderência = 1** (não desqualifica automaticamente).
+- **Multiunidade e pizzarias (decisão P4 — DECIDIDO 27/10/2026): SIM, entram
+  no ICP**, desde que independentes. Uma conta multiunidade independente pode
+  receber **Aderência 2** (não fica mais travada em 1). Só **rede/franquia**
+  desqualifica (Aderência 0).
 - iFood (nota e avaliações) mede só a "vitrine", **não** comprova faturamento.
   Enquanto não confirmado, faturamento = "A investigar". **Nunca inventar receita.**
 
@@ -71,7 +74,7 @@ Você **não escolhe a letra**: dá 5 notas de 0 a 2 e a soma vira a letra.
 
 | Critério | Pergunta | Nota 0 | Nota 1 | Nota 2 |
 |---|---|---|---|---|
-| **Aderência** ⚠ | Cabe no que a ÔA faz? | Rede/franquia, tesouraria, contábil fiscal, RH/DP | Dúvida (ex.: 2+ unidades, aguarda P4) | Hamburgueria independente, 1 loja, 1–3 marcas |
+| **Aderência** ⚠ | Cabe no que a ÔA faz? | Rede/franquia, tesouraria, contábil fiscal, RH/DP | Dúvida real (ainda falta confirmar independência ou escopo) | Independente (hamburgueria ou pizzaria), inclusive multiunidade, 1–3 marcas |
 | **Dor** | O dono sente o problema? | Diz que está tudo ótimo | Admite confusão, sem exemplo | Conta um caso real |
 | **Acesso ao decisor** | Fala com quem decide? | Só com funcionário | Com intermediário | Direto com dono/sócio |
 | **Viabilidade** ⚠ | Fatura na faixa da ÔA? | Abaixo de R$ 100 mil, ou não quer investir | Não sei (ou acima de R$ 500 mil — validar) | Confirmado entre R$ 100 mil e R$ 500 mil/mês |

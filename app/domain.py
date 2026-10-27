@@ -12,9 +12,14 @@ from __future__ import annotations
 # ICP — cliente ideal
 # ---------------------------------------------------------------------------
 ICP = {
-    "segmento": "Hamburguerias independentes",
+    "segmento": "Hamburguerias e pizzarias independentes (inclui multiunidade)",
     "faturamento_min_mensal": 100_000,  # R$ 100 mil/mês
     "faturamento_max_mensal": 500_000,  # R$ 500 mil/mês
+    # Decisão P4 (27/10/2026): contas com 2+ unidades e pizzarias ENTRAM no ICP,
+    # desde que independentes (não rede/franquia). Multiunidade independente
+    # pode receber Aderência 2 (não fica mais travada em 1).
+    "observacao": ("P4 (27/10/2026): multiunidade e pizzarias independentes "
+                   "entram no ICP. Só rede/franquia desqualifica."),
 }
 
 # ---------------------------------------------------------------------------
@@ -188,7 +193,7 @@ PRODUTOS = [
         "nome": "Adicional loja extra",
         "escopo": "Unidade física adicional do mesmo grupo.",
         "setup": None, "mensalidade": 1200, "fidelidade_meses": 6,
-        "status": "Validar capacidade antes de propor (decisão P4).",
+        "status": "Liberado (P4 decidida). Validar capacidade com a Operação antes de propor.",
     },
     {
         "nome": "Adicional marca extra",
