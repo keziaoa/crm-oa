@@ -1,0 +1,21 @@
+# Ambiente virtual do Python (a "caixa" com o Flask instalado)
+.venv/
+venv/
+
+# Arquivos temporários do Python
+__pycache__/
+*.pyc
+
+# Banco de dados local e dados de clientes — NÃO sobem para o git
+instance/
+*.db
+*.sqlite
+*.sqlite3
+
+# Variáveis de ambiente com segredos (senhas, chaves)
+.env
+
+# Arquivos do sistema operacional / editor
+.DS_Store
+.vscode/
+.idea/

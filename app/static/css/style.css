@@ -1,0 +1,76 @@
+/* Cores oficiais da marca ÔA */
+:root {
+  --verde-escuro: #0E423A;
+  --areia: #EFE9DD;
+  --dourado: #C58E2A;
+  --verde-claro: #5C7C5A;
+  --quase-preto: #16130E;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: var(--areia);
+  color: var(--quase-preto);
+  line-height: 1.5;
+}
+
+.topo {
+  background: var(--verde-escuro);
+  color: var(--areia);
+  padding: 20px 24px;
+}
+.marca { display: flex; align-items: center; gap: 16px; max-width: 980px; margin: 0 auto; }
+.logo {
+  font-size: 28px; font-weight: 700; letter-spacing: 1px;
+  background: var(--dourado); color: var(--quase-preto);
+  width: 54px; height: 54px; display: flex; align-items: center; justify-content: center;
+  border-radius: 12px;
+}
+.topo h1 { margin: 0; font-size: 22px; }
+.sub { margin: 2px 0 0; font-size: 13px; opacity: .85; }
+
+.conteudo { max-width: 980px; margin: 24px auto; padding: 0 16px; }
+
+.cartao {
+  background: #fff;
+  border: 1px solid rgba(14, 66, 58, .12);
+  border-radius: 14px;
+  padding: 20px 22px;
+  margin-bottom: 18px;
+}
+.cartao h2 { color: var(--verde-escuro); margin-top: 0; }
+.cartao h3 { color: var(--verde-escuro); margin: 0 0 10px; }
+.destaque { border-left: 6px solid var(--verde-claro); }
+.destaque h2 { color: var(--verde-claro); }
+.contador { background: var(--areia); display: inline-block; padding: 6px 12px; border-radius: 8px; }
+
+.grade { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+@media (max-width: 720px) { .grade { grid-template-columns: 1fr; } }
+
+.funil { list-style: none; padding: 0; margin: 0;
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+@media (max-width: 720px) { .funil { grid-template-columns: 1fr; } }
+.funil li { background: var(--areia); border-radius: 8px; padding: 8px 12px;
+  display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 14px; }
+.funil li.saida { background: #f6ebe6; opacity: .9; }
+.funil .num { background: var(--verde-escuro); color: var(--areia);
+  width: 24px; height: 24px; border-radius: 50%; display: inline-flex;
+  align-items: center; justify-content: center; font-size: 12px; flex: none; }
+.funil li.saida .num { background: var(--dourado); color: var(--quase-preto); }
+.funil .fase { font-weight: 400; font-size: 11px; opacity: .65; margin-left: auto; text-align: right; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { background: var(--verde-claro); color: #fff; padding: 5px 11px;
+  border-radius: 20px; font-size: 13px; font-weight: 600; }
+
+.alerta { color: #b23b2e; font-size: 12px; font-weight: 700; margin-left: 6px; }
+.nota { font-size: 13px; background: var(--areia); padding: 8px 12px; border-radius: 8px; }
+
+table { width: 100%; border-collapse: collapse; }
+th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid rgba(14,66,58,.1); }
+th { color: var(--verde-escuro); font-size: 13px; }
+
+.rodape { text-align: center; color: var(--verde-escuro); font-size: 12px; padding: 20px; opacity: .7; }

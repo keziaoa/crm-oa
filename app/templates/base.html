@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}CRM Comercial ÔA{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <header class="topo">
+    <div class="marca">
+      <span class="logo">ÔA</span>
+      <div>
+        <h1>CRM Comercial ÔA</h1>
+        <p class="sub">Respire. A gestão é com a gente.</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="conteudo">
+    {% block conteudo %}{% endblock %}
+  </main>
+
+  <footer class="rodape">
+    <p>ÔA Gestão Especializada · Sistema local (roda só no seu computador)</p>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<section class="cartao destaque">
+  <h2>✓ Fase 0 concluída — o sistema está no ar</h2>
+  <p>
+    Este é o esqueleto do CRM Comercial da ÔA. Ainda não há telas de uso
+    (cadastro, funil, qualificação) — elas chegam nas próximas fases. Por
+    enquanto, as <strong>regras de negócio</strong> já estão configuradas e
+    o <strong>banco de dados</strong> está pronto.
+  </p>
+  <p class="contador">Clientes cadastrados no banco: <strong>{{ total_clientes }}</strong></p>
+</section>
+
+<section class="cartao">
+  <h3>Cliente ideal (ICP)</h3>
+  <p>
+    {{ icp.segmento }} · faturamento de
+    <strong>R$ {{ "{:,.0f}".format(icp.faturamento_min_mensal).replace(",", ".") }}</strong>
+    a
+    <strong>R$ {{ "{:,.0f}".format(icp.faturamento_max_mensal).replace(",", ".") }}</strong>
+    por mês.
+  </p>
+</section>
+
+<section class="cartao">
+  <h3>Os 17 status do funil</h3>
+  <ol class="funil">
+    {% for ordem, nome, fase, tipo in status_funil %}
+      <li class="{{ tipo }}"><span class="num">{{ ordem }}</span> {{ nome }}
+        <span class="fase">{{ fase }}</span></li>
+    {% endfor %}
+  </ol>
+</section>
+
+<div class="grade">
+  <section class="cartao">
+    <h3>Qualificação — 5 notas (0 a 2)</h3>
+    <ul>
+      {% for c in criterios %}
+        <li>{{ c.nome }}{% if c.elimina_se_zero %}
+          <span class="alerta">0 = Desqualificado (D)</span>{% endif %}</li>
+      {% endfor %}
+    </ul>
+    <p class="nota">Soma 8–10 = A · 5–7 = B · 1–4 = C · 0 (ou Aderência/Viabilidade 0) = D</p>
+  </section>
+
+  <section class="cartao">
+    <h3>Cadência (dias úteis)</h3>
+    <p class="chips">
+      {% for d in cadencia %}<span class="chip">D{{ d }}</span>{% endfor %}
+    </p>
+    <h3>Pós-venda (a partir do kickoff)</h3>
+    <p class="chips">
+      {% for m in marcos %}<span class="chip">{{ m.marco }} · {{ m.nome }}</span>{% endfor %}
+    </p>
+  </section>
+</div>
+
+<section class="cartao">
+  <h3>Produtos e preços (tabela vigente)</h3>
+  <table>
+    <thead>
+      <tr><th>Produto</th><th>Setup</th><th>Mensalidade</th><th>Fidelidade</th></tr>
+    </thead>
+    <tbody>
+      {% for p in produtos %}
+      <tr>
+        <td>{{ p.nome }}</td>
+        <td>{% if p.setup %}R$ {{ "{:,.0f}".format(p.setup).replace(",", ".") }}{% else %}A consultar{% endif %}</td>
+        <td>R$ {{ "{:,.0f}".format(p.mensalidade).replace(",", ".") }}</td>
+        <td>{{ p.fidelidade_meses }} meses</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+
+<section class="cartao">
+  <h3>Ficha de Passagem (Gate) — 8 itens</h3>
+  <p>Só vira <strong>Liberado p/ Setup</strong> com os 8 itens em "Sim".</p>
+  <ol>
+    {% for item in gate_itens %}<li>{{ item }}</li>{% endfor %}
+  </ol>
+</section>
+{% endblock %}
