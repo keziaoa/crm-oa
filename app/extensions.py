@@ -1,10 +1,14 @@
 """
 Extensões do Flask criadas em um único lugar, para evitar importações
-circulares. Por enquanto só temos o banco de dados (SQLAlchemy).
+circulares.
 """
+from flask_login import LoginManager
+from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
-# "db" é a porta de entrada para o banco. Todos os modelos (tabelas) e
-# repositórios usam este mesmo objeto. Trocar SQLite por PostgreSQL não
-# muda nada aqui — só muda o endereço em config.py.
 db = SQLAlchemy()
+migrate = Migrate()
+login_manager = LoginManager()
+login_manager.login_view = "auth.login"
+login_manager.login_message = "Faça login para acessar o sistema."
+login_manager.login_message_category = "erro"

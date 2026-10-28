@@ -6,6 +6,7 @@ no ar e mostra um resumo das regras já configuradas. As telas de verdade
 (cadastro, funil, qualificação etc.) entram nas próximas fases.
 """
 from flask import Blueprint, current_app, render_template
+from flask_login import login_required
 
 from app import domain
 from app.repositories import clientes
@@ -14,6 +15,7 @@ bp = Blueprint("main", __name__)
 
 
 @bp.route("/")
+@login_required
 def index():
     return render_template(
         "index.html",

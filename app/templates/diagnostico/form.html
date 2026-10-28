@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Diagnóstico {{ cliente.conta_id }} — CRM Comercial ÔA{% endblock %}
+
+{% block conteudo %}
+<div class="cabecalho-pagina">
+  <div>
+    <p class="migalha">
+      <a href="{{ url_for('contas.lista') }}">Contas</a> ›
+      <a href="{{ url_for('contas.detalhe', id=cliente.id) }}">{{ cliente.conta_id }}</a> ›
+      Diagnóstico
+    </p>
+    <h2>Ficha de Diagnóstico — {{ cliente.nome_fantasia }}</h2>
+    <p class="nota">Preencha durante ou após a reunião de diagnóstico. Todos os campos são de texto livre.</p>
+  </div>
+</div>
+
+<form method="post">
+  <div class="cartao">
+    <div class="campo" style="max-width: 260px;">
+      <label for="data_reuniao">Data da reunião</label>
+      <input type="date" id="data_reuniao" name="data_reuniao"
+             value="{{ valores.get('data_reuniao', '') or '' }}">
+    </div>
+  </div>
+
+  {% for bloco in blocos %}
+  <div class="cartao diag-bloco">
+    <h3>
+      <span class="diag-num">{{ bloco.num }}</span>
+      {{ bloco.titulo }}
+    </h3>
+    <p class="nota">{{ bloco.descricao }}</p>
+    <textarea name="bloco_{{ bloco.chave }}" rows="4"
+              placeholder="Anotações...">{{ valores.get('bloco_' ~ bloco.chave, '') }}</textarea>
+  </div>
+  {% endfor %}
+
+  <div class="cartao diag-bloco">
+    <h3>Resumo e recomendação</h3>
+    <div class="campo">
+      <label for="produto_recomendado">Produto recomendado</label>
+      <select id="produto_recomendado" name="produto_recomendado">
+        <option value="">— selecionar —</option>
+        {% for p in planos %}
+        <option value="{{ p }}" {{ 'selected' if valores.get('produto_recomendado') == p }}>{{ p }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="campo">
+      <label for="exclusoes">Exclusões de escopo (o que NÃO entra)</label>
+      <textarea id="exclusoes" name="exclusoes" rows="2"
+                placeholder="Ex.: RH, folha de pagamento, tesouraria...">{{ valores.get('exclusoes', '') }}</textarea>
+    </div>
+    <div class="campo">
+      <label for="observacoes">Observações gerais</label>
+      <textarea id="observacoes" name="observacoes" rows="2"
+                placeholder="Algo mais relevante...">{{ valores.get('observacoes', '') }}</textarea>
+    </div>
+  </div>
+
+  <div class="acoes-form" style="margin-top: 16px;">
+    <button type="submit" class="botao botao-principal">Salvar diagnóstico</button>
+    <a href="{{ url_for('contas.detalhe', id=cliente.id) }}" class="botao">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

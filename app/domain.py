@@ -246,6 +246,43 @@ PRODUTOS = [
     },
 ]
 
+# ---------------------------------------------------------------------------
+# Ficha de Diagnóstico Comercial — 10 blocos (Fase 6).
+# Cada bloco é um grupo de perguntas respondidas na reunião de diagnóstico.
+# ---------------------------------------------------------------------------
+BLOCOS_DIAGNOSTICO = [
+    {"num": 1, "chave": "contexto",
+     "titulo": "Contexto do negócio",
+     "descricao": "Há quanto tempo opera? Quantas unidades/marcas? Quem é o público?"},
+    {"num": 2, "chave": "dor_principal",
+     "titulo": "Dor principal",
+     "descricao": "Qual o maior problema de gestão hoje? O que tira o sono do dono?"},
+    {"num": 3, "chave": "financeiro_atual",
+     "titulo": "Situação financeira atual",
+     "descricao": "Tem DRE? Sabe o lucro real? Contas a pagar organizadas? Ponto de equilíbrio?"},
+    {"num": 4, "chave": "controles",
+     "titulo": "Controles que tem hoje",
+     "descricao": "Usa planilha, caderno, sistema? O que é feito e o que não é feito?"},
+    {"num": 5, "chave": "operacao",
+     "titulo": "Operação (estoque, fichas, CMV)",
+     "descricao": "Tem fichas técnicas? Controla estoque? Sabe o CMV? Margem por canal?"},
+    {"num": 6, "chave": "canais_venda",
+     "titulo": "Canais de venda",
+     "descricao": "iFood, Rappi, salão, delivery próprio? Qual gera mais receita? Qual mais margem?"},
+    {"num": 7, "chave": "equipe_processos",
+     "titulo": "Equipe e processos",
+     "descricao": "Quantos funcionários? Tem gerente? POPs escritos? Rotina de fechamento?"},
+    {"num": 8, "chave": "tecnologia",
+     "titulo": "Tecnologia atual",
+     "descricao": "Sistema de PDV? ERP? Planilhas? Integração com iFood/Rappi?"},
+    {"num": 9, "chave": "expectativas",
+     "titulo": "Expectativas e objetivos",
+     "descricao": "O que espera da ÔA? Em quanto tempo quer ver resultado? O que NÃO quer?"},
+    {"num": 10, "chave": "recomendacao",
+     "titulo": "Produto recomendado e escopo",
+     "descricao": "Qual plano faz sentido? O que entra e o que NÃO entra? Exclusões claras."},
+]
+
 # Regras comerciais fixas da proposta.
 REGRAS_PROPOSTA = [
     "Proposta válida por 10 dias úteis.",
@@ -259,6 +296,60 @@ PLANOS = ["ÔA Completo", "ÔA Meu Financeiro", "A definir"]
 
 # Status do funil em que a conta já é um CLIENTE ATIVO (recebido pela Operação).
 STATUS_CLIENTE_ATIVO = "Liberado p/ Setup"
+
+
+# ---------------------------------------------------------------------------
+# Transições permitidas no funil (Fase 3).
+# ---------------------------------------------------------------------------
+
+# Mapa: índice do status → índice(s) do(s) status destino
+_STATUS_ORDEM = {nome: i for i, (_, nome, _, _) in enumerate(STATUS_FUNIL)}
+_STATUS_POR_IDX = {i: nome for i, (_, nome, _, _) in enumerate(STATUS_FUNIL)}
+
+# Status de saída — qualquer conta do pipeline pode ir para eles.
+_SAIDA = [nome for _, nome, _, tipo in STATUS_FUNIL if tipo == "saida"]
+
+# Pipeline — os 14 status ordenados.
+_PIPELINE = [nome for _, nome, _, tipo in STATUS_FUNIL if tipo == "pipeline"]
+
+
+def transicoes_validas(status_atual: str) -> list[str]:
+    """Dado o status atual, devolve a lista de status para os quais a conta
+    pode ser movida. Regras:
+
+    Pipeline:
+      - Pode avançar para qualquer status à frente no pipeline.
+      - Pode voltar para qualquer status anterior no pipeline.
+      - Pode ir para qualquer status de saída (Nutrição, Perdido, Desqualificado).
+
+    Saída:
+      - Nutrição (60 dias): pode voltar para qualquer status do pipeline.
+      - Perdido / Desqualificado: só pode ser alterado pela tela de edição
+        (não aparece no Kanban como ação rápida).
+    """
+    tipo = STATUS_TIPO.get(status_atual)
+    if tipo is None:
+        return []
+
+    if tipo == "pipeline":
+        outros_pipeline = [s for s in _PIPELINE if s != status_atual]
+        return outros_pipeline + _SAIDA
+
+    if status_atual == "Nutrição (60 dias)":
+        return list(_PIPELINE)
+
+    return []
+
+
+def proximo_status(status_atual: str) -> str | None:
+    """Devolve o próximo status natural na sequência do pipeline, ou None."""
+    if status_atual not in _STATUS_ORDEM:
+        return None
+    idx = _STATUS_ORDEM[status_atual]
+    prox_idx = idx + 1
+    if prox_idx < len(STATUS_FUNIL) and STATUS_FUNIL[prox_idx][3] == "pipeline":
+        return STATUS_FUNIL[prox_idx][1]
+    return None
 
 
 def produto_por_nome(nome: str | None) -> dict | None:

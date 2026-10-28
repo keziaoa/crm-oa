@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block title %}Cadência {{ cliente.conta_id }} — CRM Comercial ÔA{% endblock %}
+
+{% block conteudo %}
+<div class="cabecalho-pagina">
+  <div>
+    <p class="migalha">
+      <a href="{{ url_for('cadencia.painel') }}">Cadência</a> ›
+      <a href="{{ url_for('contas.detalhe', id=cliente.id) }}">{{ cliente.conta_id }}</a> ›
+      Cadência #{{ cad.id }}
+    </p>
+    <h2>Cadência — {{ cliente.nome_fantasia }}</h2>
+    <p class="nota">
+      D0: {{ cad.data_d0.strftime('%d/%m/%Y') }} ·
+      Decisor: {{ cliente.nome_decisor or 'não informado' }} ·
+      Responsável: {{ cliente.responsavel or '—' }}
+      {% if not cad.ativa %}
+        · <span class="badge badge-inativo">Encerrada</span>
+        {% if cad.motivo_encerramento %}({{ cad.motivo_encerramento }}){% endif %}
+      {% endif %}
+      {% if cad.respondeu %}
+        · <span class="badge badge-ativo">Respondeu!</span>
+      {% endif %}
+    </p>
+  </div>
+</div>
+
+{# Timeline dos 4 contatos #}
+<div class="cartao">
+  <h3>Contatos da Cadência</h3>
+  <div class="cadencia-timeline">
+    {% for ct in contatos %}
+    <div class="cadencia-step {{ 'step-realizado' if ct.realizado else ('step-atrasado' if (ct.data_prevista < hoje and cad.ativa and not ct.realizado) else 'step-pendente') }}">
+      <div class="step-header">
+        <span class="step-rotulo">{{ ct.rotulo }}</span>
+        <span class="step-data">{{ ct.data_prevista.strftime('%d/%m/%Y (%a)') }}</span>
+        {% if ct.realizado %}
+          <span class="badge badge-concluido">Feito em {{ ct.data_realizado.strftime('%d/%m') }}</span>
+        {% elif ct.data_prevista < hoje and cad.ativa %}
+          <span class="badge badge-atrasado">Atrasado</span>
+        {% elif ct.data_prevista == hoje and cad.ativa %}
+          <span class="badge badge-hoje">Hoje</span>
+        {% endif %}
+      </div>
+
+      {% if ct.rotulo == 'D0' %}
+        <p class="step-instrucao">WhatsApp/Instagram. Abertura com contexto real.</p>
+      {% elif ct.rotulo == 'D3' %}
+        <p class="step-instrucao">WhatsApp/E-mail. Pergunta direta sobre a dor de rotina.</p>
+      {% elif ct.rotulo == 'D7' %}
+        <p class="step-instrucao">WhatsApp. Prova de valor com exemplo prático (DRE, margem por canal).</p>
+      {% elif ct.rotulo == 'D12' %}
+        <p class="step-instrucao">WhatsApp/E-mail. Encerramento respeitoso → Nutrição (60 dias).</p>
+      {% endif %}
+
+      {% if ct.obs %}
+        <p class="step-obs"><strong>Obs:</strong> {{ ct.obs }}</p>
+      {% endif %}
+
+      {% if not ct.realizado and cad.ativa %}
+      <form method="post" action="{{ url_for('cadencia.registrar_contato', cad_id=cad.id) }}"
+            class="step-form">
+        <input type="hidden" name="contato" value="{{ ct.chave }}">
+        <div class="step-form-linha">
+          <input type="text" name="obs" placeholder="Observação (opcional)" class="step-input">
+          <button type="submit" class="botao botao-principal botao-mini">Registrar {{ ct.rotulo }}</button>
+        </div>
+      </form>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+{# Ações da cadência #}
+{% if cad.ativa %}
+<div class="cartao" style="margin-top: 16px;">
+  <h3>Ações</h3>
+  <div class="cadencia-acoes">
+    <form method="post" action="{{ url_for('cadencia.respondeu', cad_id=cad.id) }}"
+          onsubmit="return confirm('Marcar que o decisor respondeu? A cadência será encerrada e a conta avança para Qualificado.');">
+      <button type="submit" class="botao botao-principal">Respondeu! Avançar para Qualificado</button>
+    </form>
+
+    <form method="post" action="{{ url_for('cadencia.encerrar', cad_id=cad.id) }}"
+          onsubmit="return confirm('Encerrar a cadência sem resposta? A conta vai para Nutrição (60 dias).');">
+      <input type="hidden" name="motivo" value="Sem resposta na cadência">
+      <button type="submit" class="botao botao-alerta">Encerrar sem resposta → Nutrição</button>
+    </form>
+  </div>
+</div>
+{% endif %}
+
+{# Referência rápida #}
+<div class="cartao" style="margin-top: 16px;">
+  <h3>Referência rápida da cadência</h3>
+  <table class="tabela-ref-notas">
+    <tr><th>Contato</th><th>Quando</th><th>Canal</th><th>Objetivo</th></tr>
+    <tr><td><strong>D0</strong></td><td>Dia 0</td><td>WhatsApp / Instagram</td><td>Abertura com contexto real</td></tr>
+    <tr><td><strong>D3</strong></td><td>3º dia útil</td><td>WhatsApp / E-mail</td><td>Pergunta direta sobre a dor</td></tr>
+    <tr><td><strong>D7</strong></td><td>7º dia útil</td><td>WhatsApp</td><td>Prova de valor (DRE, margem)</td></tr>
+    <tr><td><strong>D12</strong></td><td>12º dia útil</td><td>WhatsApp / E-mail</td><td>Encerramento respeitoso</td></tr>
+  </table>
+  <p class="nota" style="margin-top: 8px;">
+    Se responder em qualquer contato: marcar "Respondeu!" e seguir pela próxima ação.
+    Se completar D12 sem resposta: encerrar → Nutrição (60 dias).
+  </p>
+</div>
+{% endblock %}

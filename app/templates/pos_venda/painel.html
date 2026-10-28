@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Pós-venda — CRM Comercial ÔA{% endblock %}
+
+{% block conteudo %}
+<div class="cabecalho-pagina">
+  <div>
+    <h2>Pós-venda — Clientes ativos</h2>
+    <p class="nota">Acompanhamento dos marcos após o kickoff (D+7, D+21, D+45, D+90, D+150).</p>
+  </div>
+</div>
+
+{% if registros %}
+<table class="tabela">
+  <thead>
+    <tr>
+      <th>Conta</th>
+      <th>Nome</th>
+      <th>Kickoff</th>
+      <th>Saúde</th>
+      <th>Próximo marco</th>
+      <th>Progresso</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for r in registros %}
+    <tr class="{% if r.proximo and r.proximo.atrasado %}linha-atrasada{% endif %}">
+      <td><a href="{{ url_for('contas.detalhe', id=r.cliente.id) }}">{{ r.cliente.conta_id }}</a></td>
+      <td>{{ r.cliente.nome_fantasia }}</td>
+      <td>{{ r.cliente.data_inicio.strftime('%d/%m/%Y') if r.cliente.data_inicio else '—' }}</td>
+      <td>
+        {% if r.pos_venda %}
+          {% set s = r.pos_venda.saude %}
+          {% if 'Verde' in s %}
+            <span class="badge badge-concluido">{{ s }}</span>
+          {% elif 'Amarelo' in s %}
+            <span class="badge badge-hoje">{{ s }}</span>
+          {% else %}
+            <span class="badge badge-atrasado">{{ s }}</span>
+          {% endif %}
+        {% else %}
+          <span class="badge">Sem registro</span>
+        {% endif %}
+      </td>
+      <td>
+        {% if r.proximo %}
+          <strong>{{ r.proximo.marco }}</strong> — {{ r.proximo.nome }}
+          <br><small>{{ r.proximo.data_prevista.strftime('%d/%m/%Y') }}
+          {% if r.proximo.atrasado %}<span class="badge badge-atrasado">Atrasado</span>{% endif %}
+          </small>
+        {% elif r.marcos %}
+          <span class="texto-ok">Todos realizados</span>
+        {% else %}
+          <span style="opacity: .5;">Sem kickoff</span>
+        {% endif %}
+      </td>
+      <td>
+        {% if r.pos_venda %}{{ r.pos_venda.marcos_realizados }}{% else %}0{% endif %}/5
+      </td>
+      <td class="acoes-celula">
+        <a href="{{ url_for('pos_venda.detalhe', id=r.cliente.id) }}" class="botao botao-mini">Ver</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<div class="cartao">
+  <p>Nenhum cliente ativo ainda. As contas aparecem aqui quando recebem o status "Liberado p/ Setup".</p>
+</div>
+{% endif %}
+{% endblock %}

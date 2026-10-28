@@ -209,22 +209,106 @@ Comercial — qualquer desconto/parcelamento/escopo extra exige **aprovação do
   importação é um clique e não depende do Excel. O modelo ganhou os campos do
   **decisor** e de **próxima ação** (a mini-migração SQLite os adiciona sem
   apagar dados). Próximo Conta ID gerado continua de CT-038.
-- [ ] **Fase 3 — Funil (Kanban).** Mover contas pelos 17 status; validar as
-  transições permitidas.
-- [ ] **Fase 4 — Qualificação.** Registrar as 5 notas e calcular A/B/C/D
-  automaticamente (com a regra eliminatória).
-- [ ] **Fase 5 — Cadência.** Agenda de D0/D3/D7/D12 em dias úteis; "próxima ação"
-  e alertas de contato atrasado.
-- [ ] **Fase 6 — Diagnóstico e Proposta.** Ficha de Diagnóstico (10 blocos) e
-  geração de proposta pela Matriz de Oferta.
-- [ ] **Fase 7 — Gate (Ficha de Passagem).** Checklist dos 8 itens; só libera
-  "Liberado p/ Setup" com os 8 "Sim".
-- [ ] **Fase 8 — Pós-venda.** Agenda dos marcos D+7/D+21/D+45/D+90/D+150 e
-  saúde da conta.
-- [ ] **Fase 9 — Painel e indicadores.** Resumo automático (funil por status,
-  prioridades, conversões, por responsável/origem).
-- [ ] **Fase 10 — Integração com o cohab-control.** Migração para PostgreSQL e
-  conexão de dados pelo CNPJ (ver seção abaixo).
+- [x] **Fase 3 — Funil Kanban (CONCLUÍDA).** Tela "/contas/funil" com visão
+  Kanban dos 17 status em colunas horizontais com scroll. Cada coluna mostra
+  o número da ordem, nome do status, fase e contagem de contas. Cards com
+  Conta ID (link para detalhe), nome, responsável, cidade e prioridade.
+  Dropdown "Mover para…" em cada card com **transições validadas**: contas do
+  pipeline podem avançar/voltar no pipeline ou ir para saída; contas em
+  "Nutrição (60 dias)" podem voltar ao pipeline; "Perdido" e "Desqualificado"
+  são finais (alterar só pela edição). O próximo status natural aparece em
+  destaque (▸) no dropdown. Transição validada no servidor
+  (`domain.transicoes_validas()`). Link "Funil" adicionado à navegação.
+  Layout full-width para acomodar as 17 colunas.
+- [x] **Fase 4 — Qualificação (CONCLUÍDA).** Tela "/contas/<id>/qualificar"
+  com formulário de 5 notas (0 a 2) usando radio buttons circulares.
+  Critérios eliminatórios (Aderência e Viabilidade) marcados com "⚠". Cálculo
+  automático da prioridade A/B/C/D com regra do descarte (eliminatória se
+  Aderência=0 ou Viabilidade=0). A prioridade é gravada no banco e aparece
+  em toda a interface (lista, detalhe, Kanban). Resumo visual na ficha de
+  detalhe com badge da letra, soma, significado e as 5 notas individuais.
+  Botão "Requalificar" para ajustar notas. Tabela de referência das notas
+  na própria tela de qualificação. Mini-migração SQLite adiciona as 5 colunas
+  de notas sem apagar dados.
+- [x] **Login e controle de acesso (CONCLUÍDO).** Sistema de autenticação com
+  Flask-Login. Modelo Usuário (`app/models/usuario.py`) com login, senha hash
+  (werkzeug) e flag ativo. Tela de login estilizada na identidade ÔA
+  (`/login`). Todas as rotas protegidas com `@login_required` — sem login, o
+  sistema redireciona para a tela de autenticação. Nome do usuário logado e
+  botão "Sair" na barra de navegação. Usuário padrão criado no primeiro
+  acesso: **login "admin", senha "oa2026"** (trocar ao colocar em uso).
+  Logout encerra a sessão e volta para o login.
+- [x] **Fase 5 — Cadência (CONCLUÍDA).** Modelo Cadencia (tabela `cadencias`)
+  com 4 contatos D0/D3/D7/D12 em dias úteis. Painel `/cadencia` lista todas
+  as cadências ativas com próximo contato e alerta de atrasado. Detalhe da
+  cadência (`/cadencia/<id>`) com timeline visual dos 4 contatos, botão para
+  registrar cada contato com observação opcional, botões "Respondeu!" (avança
+  para Qualificado) e "Encerrar sem resposta" (vai para Nutrição 60 dias).
+  Botão "Iniciar cadência" na ficha de detalhe da conta (muda automaticamente
+  o status para "Em Cadência"). Contatos atrasados destacados em vermelho.
+  Referência rápida da cadência na tela. Link "Cadência" na navegação.
+- [x] **Fase 6 — Diagnóstico e Proposta (CONCLUÍDA).** Modelo Diagnostico
+  (tabela `diagnosticos`) com 10 blocos de texto (contexto, dor principal,
+  financeiro atual, controles, operação, canais de venda, equipe/processos,
+  tecnologia, expectativas, recomendação), data de reunião, produto
+  recomendado e exclusões. Tela `/contas/<id>/diagnostico` com formulário
+  numerado dos 10 blocos; `/contas/<id>/diagnostico/ver` exibe o diagnóstico
+  com badge de completude (X/10 blocos). Modelo Proposta (tabela `propostas`)
+  com produto, setup, mensalidade, fidelidade, lojas e marcas extras,
+  valor total mensal e setup total, data de envio e validade (10 dias úteis).
+  Tela `/contas/<id>/proposta/nova` com tabela de preços, dropdown de produto
+  (pré-selecionado do diagnóstico), campos para extras e data de envio;
+  `/contas/<id>/proposta/<pid>` exibe a proposta com totais destacados em
+  dourado; botão "Marcar como enviada" para propostas rascunho. Transições
+  automáticas de status: salvar diagnóstico → "Diagnóstico Realizado";
+  enviar proposta → "Proposta Enviada". Seção "Diagnóstico e Proposta" na
+  ficha de detalhe da conta com links para diagnóstico e propostas.
+- [x] **Fase 7 — Gate / Ficha de Passagem (CONCLUÍDA).** Modelo Gate (tabela
+  `gates`) com 8 itens booleanos e 8 campos de observação. Tela
+  `/contas/<id>/gate` com checklist visual: cada item com checkbox, número
+  circular e campo de observação opcional; itens confirmados ficam verdes.
+  Barra de progresso "X/8 itens confirmados". Quando os 8 itens estiverem
+  "Sim", o status muda automaticamente para "Liberado p/ Setup" e a conta
+  vira cliente ativo. Seção "Gate (Ficha de Passagem)" na ficha de detalhe
+  da conta com resumo e link para preencher/ver o gate. Tabela de referência
+  dos 8 itens na própria tela do gate.
+- [x] **Fase 8 — Pós-venda (CONCLUÍDA).** Modelo PosVenda (tabela `pos_vendas`)
+  com saúde da conta (Verde/Amarelo/Vermelho) e 5 marcos com status
+  (Pendente/Agendado/Realizado/Não realizado), data de realização e observação.
+  Painel `/pos-venda` lista todos os clientes ativos com kickoff, saúde
+  (badge colorido), próximo marco com alerta de atraso e progresso X/5.
+  Detalhe `/contas/<id>/pos-venda` com seletor de saúde (radio pills coloridos)
+  e timeline dos 5 marcos: badge (D+7 etc.), nome, data prevista (dias
+  corridos a partir do kickoff), alerta "Atrasado" quando a data prevista
+  já passou e o marco não foi realizado, formulário por marco (status +
+  observação). Rota `POST /contas/<id>/pos-venda/marco/<num>` registra cada
+  marco individualmente. Seção "Pós-venda" na ficha de detalhe da conta
+  (visível apenas para clientes ativos com data_inicio) com marcos realizados
+  e badge de saúde. Link "Pós-venda" na navegação. Redireciona para a ficha
+  da conta se a data de início não estiver preenchida.
+- [x] **Fase 9 — Painel e indicadores (CONCLUÍDA).** Tela `/painel` com
+  resumo automático do CRM. Cards de KPI no topo (total de contas, em
+  prospecção, clientes ativos, cadências ativas, em saída). Funil por status
+  com contagem e barra de progresso para cada um dos 17 status. Conversões
+  entre estágios-chave (Pesquisa→Cadência, Cadência→Qualificado,
+  Qualificado→Diagnóstico, Proposta→Fechamento) com taxa percentual.
+  Distribuição por prioridade (A/B/C/D/Pendente). Agrupamento por
+  responsável e por origem com barras proporcionais. Saúde dos clientes
+  ativos (Verde/Amarelo/Vermelho). Método `indicadores()` no repositório
+  com queries agregadas. Link "Painel" na navegação.
+- [x] **Fase 10 — Integração com o cohab-control (CONCLUÍDA).** Preparação
+  completa para PostgreSQL. **Flask-Migrate 4.1.0** (Alembic) adicionado
+  como dependência e inicializado (`app/extensions.py` → `migrate`).
+  Migração inicial gerada em `migrations/versions/` com todas as 7 tabelas
+  (clientes, usuarios, cadencias, diagnosticos, gates, pos_vendas, propostas)
+  e seus índices. Driver **psycopg 3** (`psycopg[binary]==3.3.6`) instalado.
+  Lógica condicional em `app/__init__.py`: SQLite continua com `db.create_all()`
+  + mini-migração automática; PostgreSQL usa `flask db upgrade` (Alembic).
+  Banco SQLite existente marcado com `flask db stamp head` para o Alembic
+  reconhecê-lo como atualizado. `.env.example` atualizado com instruções
+  para PostgreSQL. **Para trocar de banco:** definir `DATABASE_URL` no `.env`
+  e rodar `flask db upgrade` — nada mais. Para futuras mudanças de esquema:
+  `flask db migrate -m "descrição"` gera o script, `flask db upgrade` aplica.
 
 ---
 
@@ -257,8 +341,10 @@ exija refazer o sistema.
 - Evolução do esquema do banco: para o **SQLite local** há uma mini-migração
   automática (`app/__init__.py` → `_garantir_colunas_sqlite`) que adiciona
   colunas novas sem apagar dados — suficiente para o uso na máquina da usuária.
-  No **servidor (PostgreSQL)**, a evolução passará a ser feita com
-  **Flask-Migrate/Alembic** (a mini-migração é restrita ao SQLite).
+  No **servidor (PostgreSQL)**, a evolução é feita com **Flask-Migrate/Alembic**
+  (já configurado, com migração inicial gerada em `migrations/versions/`).
+  Para gerar uma nova migração: `flask db migrate -m "descrição"`;
+  para aplicar: `flask db upgrade`.
 
 ---
 
@@ -286,6 +372,7 @@ crm-oa/
 │   ├── templates/         # HTML das páginas
 │   └── static/            # CSS (cores da marca)
 ├── instance/              # banco SQLite local (fora do git)
+├── migrations/            # migrações Alembic (para PostgreSQL)
 ├── run.py                 # inicia o sistema
 ├── requirements.txt       # bibliotecas necessárias
 ├── .env.example           # modelo de variáveis de ambiente

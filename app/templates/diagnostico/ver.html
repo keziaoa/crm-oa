@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}Diagnóstico {{ cliente.conta_id }} — CRM Comercial ÔA{% endblock %}
+
+{% macro brl(n) %}{% if n is none %}A consultar{% else %}R$ {{ '{:,.0f}'.format(n).replace(',', '.') }}{% endif %}{% endmacro %}
+
+{% block conteudo %}
+<div class="cabecalho-pagina">
+  <div>
+    <p class="migalha">
+      <a href="{{ url_for('contas.lista') }}">Contas</a> ›
+      <a href="{{ url_for('contas.detalhe', id=cliente.id) }}">{{ cliente.conta_id }}</a> ›
+      Diagnóstico
+    </p>
+    <h2>Diagnóstico — {{ cliente.nome_fantasia }}</h2>
+    <p class="nota">
+      {{ diag.blocos_preenchidos }}/10 blocos preenchidos
+      {% if diag.data_reuniao %} · Reunião: {{ diag.data_reuniao.strftime('%d/%m/%Y') }}{% endif %}
+      {% if diag.completo %}
+        · <span class="badge badge-concluido">Completo</span>
+      {% else %}
+        · <span class="badge badge-hoje">Incompleto</span>
+      {% endif %}
+    </p>
+  </div>
+  <div class="acoes-topo">
+    <a class="botao botao-principal" href="{{ url_for('diagnostico.diagnostico', id=cliente.id) }}">Editar</a>
+    <a class="botao" href="{{ url_for('diagnostico.nova_proposta', id=cliente.id) }}">Gerar proposta</a>
+  </div>
+</div>
+
+{% for bloco in blocos %}
+{% set campo = 'bloco_' ~ bloco.chave %}
+{% set valor = blocos_valores.get(campo, '') %}
+<div class="cartao diag-bloco">
+  <h3>
+    <span class="diag-num">{{ bloco.num }}</span>
+    {{ bloco.titulo }}
+  </h3>
+  {% if valor %}
+    <p class="diag-texto">{{ valor }}</p>
+  {% else %}
+    <p class="diag-vazio">Não preenchido</p>
+  {% endif %}
+</div>
+{% endfor %}
+
+{% if diag.produto_recomendado or diag.exclusoes or diag.observacoes %}
+<div class="cartao diag-bloco">
+  <h3>Resumo e recomendação</h3>
+  {% if diag.produto_recomendado %}
+    <p><strong>Produto recomendado:</strong> {{ diag.produto_recomendado }}</p>
+  {% endif %}
+  {% if diag.exclusoes %}
+    <p><strong>Exclusões:</strong> {{ diag.exclusoes }}</p>
+  {% endif %}
+  {% if diag.observacoes %}
+    <p><strong>Observações:</strong> {{ diag.observacoes }}</p>
+  {% endif %}
+</div>
+{% endif %}
+
+{# Propostas existentes #}
+{% set props = cliente.propostas.all() %}
+{% if props %}
+<div class="cartao" style="margin-top: 16px;">
+  <h3>Propostas</h3>
+  <table class="tabela">
+    <thead>
+      <tr><th>#</th><th>Produto</th><th>Mensal</th><th>Envio</th><th>Status</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for p in props %}
+      <tr>
+        <td>{{ p.id }}</td>
+        <td>{{ p.produto }}</td>
+        <td>{{ brl(p.valor_total_mensal) }}</td>
+        <td>{{ p.data_envio.strftime('%d/%m/%Y') if p.data_envio else '—' }}</td>
+        <td>
+          {% if p.expirada %}
+            <span class="badge badge-atrasado">Expirada</span>
+          {% elif p.status == 'Enviada' %}
+            <span class="badge badge-ativo">{{ p.status }}</span>
+          {% else %}
+            <span class="badge">{{ p.status }}</span>
+          {% endif %}
+        </td>
+        <td class="acoes-celula">
+          <a href="{{ url_for('diagnostico.ver_proposta', id=cliente.id, pid=p.id) }}" class="botao botao-mini">Ver</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+{% endblock %}

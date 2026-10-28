@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Cadência — CRM Comercial ÔA{% endblock %}
+
+{% block conteudo %}
+<div class="cabecalho-pagina">
+  <div>
+    <h2>Cadência de Prospecção</h2>
+    <p class="nota">Contas em cadência ativa (D0 → D3 → D7 → D12). Contatos atrasados aparecem primeiro.</p>
+  </div>
+</div>
+
+{% if cadencias_ativas %}
+<table class="tabela">
+  <thead>
+    <tr>
+      <th>Conta</th>
+      <th>Empresa</th>
+      <th>Responsável</th>
+      <th>D0</th>
+      <th>Próximo</th>
+      <th>Data prevista</th>
+      <th>Status</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in cadencias_ativas %}
+    {% set c = item.cliente %}
+    {% set cad = item.cadencia %}
+    <tr class="{{ 'linha-atrasada' if item.atrasado else '' }}">
+      <td><a href="{{ url_for('contas.detalhe', id=c.id) }}">{{ c.conta_id }}</a></td>
+      <td>{{ c.nome_fantasia }}</td>
+      <td>{{ c.responsavel or '—' }}</td>
+      <td>{{ cad.data_d0.strftime('%d/%m') }}</td>
+      <td>
+        {% if item.proximo_contato %}
+          <strong>{{ item.proximo_contato|upper }}</strong>
+        {% else %}
+          <span class="texto-ok">Todos feitos</span>
+        {% endif %}
+      </td>
+      <td>
+        {% if item.data_proximo %}
+          {{ item.data_proximo.strftime('%d/%m/%Y') }}
+        {% else %}
+          —
+        {% endif %}
+      </td>
+      <td>
+        {% if item.atrasado %}
+          <span class="badge badge-atrasado">Atrasado</span>
+        {% elif item.proximo_contato %}
+          <span class="badge badge-ativo">Em dia</span>
+        {% else %}
+          <span class="badge badge-concluido">Concluído</span>
+        {% endif %}
+      </td>
+      <td class="acoes-celula">
+        <a href="{{ url_for('cadencia.detalhe', cad_id=cad.id) }}" class="botao botao-mini">Abrir</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<div class="cartao">
+  <p>Nenhuma cadência ativa no momento.</p>
+  <p class="nota">Para iniciar uma cadência, vá até a ficha de uma conta e clique em "Iniciar cadência"
+     (a conta precisa estar no status "Em Cadência" ou será movida automaticamente).</p>
+</div>
+{% endif %}
+{% endblock %}

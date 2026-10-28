@@ -17,7 +17,18 @@
     </div>
     <nav class="menu">
       <a href="{{ url_for('main.index') }}">Início</a>
+      <a href="{{ url_for('painel.index') }}">Painel</a>
       <a href="{{ url_for('contas.lista') }}">Contas</a>
+      <a href="{{ url_for('contas.funil') }}">Funil</a>
+      <a href="{{ url_for('cadencia.painel') }}">Cadência</a>
+      <a href="{{ url_for('pos_venda.painel') }}">Pós-venda</a>
+      <a href="{{ url_for('auth.usuarios') }}">Usuários</a>
+      {% if current_user.is_authenticated %}
+      <div class="usuario-info">
+        <a href="{{ url_for('auth.minha_conta') }}" class="usuario-nome">{{ current_user.nome }}</a>
+        <a href="{{ url_for('auth.logout') }}" class="botao-logout">Sair</a>
+      </div>
+      {% endif %}
     </nav>
   </header>
 

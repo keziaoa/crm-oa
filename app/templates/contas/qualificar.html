@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block title %}Qualificar {{ c.conta_id }} — CRM Comercial ÔA{% endblock %}
+
+{% block conteudo %}
+<div class="cabecalho-pagina">
+  <div>
+    <p class="migalha">
+      <a href="{{ url_for('contas.lista') }}">Contas</a> ›
+      <a href="{{ url_for('contas.detalhe', id=c.id) }}">{{ c.conta_id }}</a> ›
+      Qualificar
+    </p>
+    <h2>Qualificação — {{ c.nome_fantasia }}</h2>
+  </div>
+</div>
+
+<div class="cartao">
+  <p class="nota">
+    Dê uma nota de <strong>0 a 2</strong> para cada critério. A soma vira a
+    letra automaticamente. Se <strong>Aderência = 0</strong> ou
+    <strong>Viabilidade = 0</strong>, a conta é <strong>D</strong> (regra eliminatória).
+  </p>
+
+  <form method="post" class="form-qualificacao">
+    <table class="tabela-qualificacao">
+      <thead>
+        <tr>
+          <th>Critério</th>
+          <th class="col-nota">0</th>
+          <th class="col-nota">1</th>
+          <th class="col-nota">2</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for cr in criterios %}
+        {% set campo = "nota_" ~ cr.chave %}
+        {% set val_atual = valores.get(campo) %}
+        <tr>
+          <td>
+            <strong>{{ cr.nome }}</strong>
+            {% if cr.elimina_se_zero %}
+              <span class="alerta">⚠ eliminatória</span>
+            {% endif %}
+          </td>
+          <td class="col-nota">
+            <label class="radio-nota">
+              <input type="radio" name="{{ campo }}" value="0"
+                     {{ 'checked' if val_atual|string == '0' }}>
+              <span class="radio-label">0</span>
+            </label>
+          </td>
+          <td class="col-nota">
+            <label class="radio-nota">
+              <input type="radio" name="{{ campo }}" value="1"
+                     {{ 'checked' if val_atual|string == '1' }}>
+              <span class="radio-label">1</span>
+            </label>
+          </td>
+          <td class="col-nota">
+            <label class="radio-nota">
+              <input type="radio" name="{{ campo }}" value="2"
+                     {{ 'checked' if val_atual|string == '2' }}>
+              <span class="radio-label">2</span>
+            </label>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <div class="acoes-form" style="margin-top: 16px;">
+      <button type="submit" class="botao botao-principal">Calcular e salvar</button>
+      <a href="{{ url_for('contas.detalhe', id=c.id) }}" class="botao">Cancelar</a>
+    </div>
+  </form>
+</div>
+
+{# Referência rápida das notas #}
+<div class="cartao" style="margin-top: 12px;">
+  <h3>Referência das notas</h3>
+  <table class="tabela-ref-notas">
+    <tr><th></th><th>0</th><th>1</th><th>2</th></tr>
+    <tr>
+      <td><strong>Aderência</strong></td>
+      <td>Rede/franquia, tesouraria, contábil, RH</td>
+      <td>Dúvida real</td>
+      <td>Independente (burger/pizza), inclusive multiunidade</td>
+    </tr>
+    <tr>
+      <td><strong>Dor</strong></td>
+      <td>Diz que está tudo ótimo</td>
+      <td>Admite confusão, sem exemplo</td>
+      <td>Conta um caso real</td>
+    </tr>
+    <tr>
+      <td><strong>Acesso ao decisor</strong></td>
+      <td>Só com funcionário</td>
+      <td>Com intermediário</td>
+      <td>Direto com dono/sócio</td>
+    </tr>
+    <tr>
+      <td><strong>Viabilidade</strong></td>
+      <td>Abaixo de R$ 100k ou não quer investir</td>
+      <td>Não sei / acima de R$ 500k</td>
+      <td>Confirmado R$ 100k–500k/mês</td>
+    </tr>
+    <tr>
+      <td><strong>Colaboração</strong></td>
+      <td>Se recusa</td>
+      <td>Promete, mas desorganizado</td>
+      <td>Compromete-se a enviar e seguir rotina</td>
+    </tr>
+  </table>
+
+  <div style="margin-top: 12px;">
+    <span class="prio prio-a">A (8–10)</span>
+    <span class="prio prio-b">B (5–7)</span>
+    <span class="prio prio-c">C (1–4)</span>
+    <span class="prio prio-d">D (0 ou eliminatória)</span>
+  </div>
+</div>
+{% endblock %}

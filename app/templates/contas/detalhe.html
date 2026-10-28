@@ -80,6 +80,122 @@
 </section>
 
 <section class="cartao">
+  <h3>Qualificação
+    <a href="{{ url_for('contas.qualificar', id=c.id) }}" class="botao"
+       style="float: right; font-size: 12px;">
+      {% if c.qualificacao_completa %}Requalificar{% else %}Qualificar{% endif %}
+    </a>
+  </h3>
+  {% if c.qualificacao_completa %}
+    {% set res = c.resultado_qualificacao %}
+    <div class="qualif-resumo">
+      <span class="prio prio-{{ res.letra|lower }}" style="font-size: 18px; padding: 6px 16px;">
+        {{ res.letra }}
+      </span>
+      <span>Soma: <strong>{{ res.soma }}/10</strong></span>
+      <span style="opacity: .7;">{{ res.significado }}</span>
+    </div>
+    <div class="qualif-resumo" style="margin-top: 8px;">
+      <div class="qualif-nota"><strong>{{ c.nota_aderencia }}</strong>Aderência</div>
+      <div class="qualif-nota"><strong>{{ c.nota_dor }}</strong>Dor</div>
+      <div class="qualif-nota"><strong>{{ c.nota_acesso_decisor }}</strong>Acesso</div>
+      <div class="qualif-nota"><strong>{{ c.nota_viabilidade }}</strong>Viabilidade</div>
+      <div class="qualif-nota"><strong>{{ c.nota_colaboracao }}</strong>Colaboração</div>
+    </div>
+  {% else %}
+    <p class="texto-longo">Ainda não qualificada. Clique em "Qualificar" para registrar as 5 notas.</p>
+  {% endif %}
+</section>
+
+<section class="cartao">
+  <h3>Cadência
+    {% if cadencia_ativa %}
+      <a href="{{ url_for('cadencia.detalhe', cad_id=cadencia_ativa.id) }}" class="botao"
+         style="float: right; font-size: 12px;">Ver cadência</a>
+    {% else %}
+      <form method="post" action="{{ url_for('cadencia.iniciar', id=c.id) }}"
+            style="float: right; display: inline;"
+            onsubmit="return confirm('Iniciar cadência D0 hoje para {{ c.nome_fantasia }}?');">
+        <button type="submit" class="botao botao-principal" style="font-size: 12px;">Iniciar cadência</button>
+      </form>
+    {% endif %}
+  </h3>
+  {% if cadencia_ativa %}
+    {% set prox = cadencia_ativa.proximo_contato() %}
+    <div class="qualif-resumo">
+      <span>D0: {{ cadencia_ativa.data_d0.strftime('%d/%m/%Y') }}</span>
+      {% if prox %}
+        <span>Próximo: <strong>{{ prox|upper }}</strong></span>
+      {% else %}
+        <span class="texto-ok">Todos os contatos realizados</span>
+      {% endif %}
+    </div>
+  {% else %}
+    <p class="texto-longo">Nenhuma cadência ativa. Clique em "Iniciar cadência" para começar D0 hoje.</p>
+  {% endif %}
+</section>
+
+<section class="cartao">
+  <h3>Diagnóstico e Proposta
+    {% if diagnostico_obj %}
+      <a href="{{ url_for('diagnostico.ver_diagnostico', id=c.id) }}" class="botao"
+         style="float: right; font-size: 12px;">Ver diagnóstico</a>
+    {% else %}
+      <a href="{{ url_for('diagnostico.diagnostico', id=c.id) }}" class="botao botao-principal"
+         style="float: right; font-size: 12px;">Preencher diagnóstico</a>
+    {% endif %}
+  </h3>
+  {% if diagnostico_obj %}
+    <div class="qualif-resumo">
+      <span>{{ diagnostico_obj.blocos_preenchidos }}/10 blocos</span>
+      {% if diagnostico_obj.completo %}
+        <span class="badge badge-concluido">Completo</span>
+      {% else %}
+        <span class="badge badge-hoje">Incompleto</span>
+      {% endif %}
+      {% if diagnostico_obj.produto_recomendado %}
+        <span>Recomendação: <strong>{{ diagnostico_obj.produto_recomendado }}</strong></span>
+      {% endif %}
+    </div>
+    {% set props = c.propostas.all() %}
+    {% if props %}
+    <div style="margin-top: 8px;">
+      {% for p in props %}
+        <a href="{{ url_for('diagnostico.ver_proposta', id=c.id, pid=p.id) }}" class="botao botao-mini"
+           style="margin-right: 4px;">
+          Proposta #{{ p.id }} ({{ p.produto }})
+          {% if p.expirada %}— expirada{% elif p.status == 'Enviada' %}— enviada{% endif %}
+        </a>
+      {% endfor %}
+    </div>
+    {% endif %}
+  {% else %}
+    <p class="texto-longo">Ainda sem diagnóstico. Clique em "Preencher diagnóstico" após a reunião.</p>
+  {% endif %}
+</section>
+
+<section class="cartao">
+  <h3>Gate (Ficha de Passagem)
+    <a href="{{ url_for('gate.gate', id=c.id) }}" class="botao"
+       style="float: right; font-size: 12px;">
+      {% if gate_obj and gate_obj.liberado %}Ver Gate{% else %}Preencher Gate{% endif %}
+    </a>
+  </h3>
+  {% if gate_obj %}
+    <div class="qualif-resumo">
+      <span>{{ gate_obj.itens_sim }}/8 itens</span>
+      {% if gate_obj.liberado %}
+        <span class="badge badge-concluido">Liberado p/ Setup</span>
+      {% else %}
+        <span class="badge badge-hoje">Faltam {{ 8 - gate_obj.itens_sim }}</span>
+      {% endif %}
+    </div>
+  {% else %}
+    <p class="texto-longo">Ainda sem Gate. Clique em "Preencher Gate" quando os 8 itens estiverem prontos.</p>
+  {% endif %}
+</section>
+
+<section class="cartao">
   <h3>Contrato / Plano</h3>
   {% if c.plano_contratado or c.data_inicio %}
   <div class="itens">
@@ -94,6 +210,82 @@
   <p class="nota">Preço é de tabela. Qualquer desconto/parcelamento depende de aprovação do André.</p>
   {% else %}
   <p class="texto-longo">Ainda sem contrato. Preencha o plano e a data de início quando o cliente fechar.</p>
+  {% endif %}
+</section>
+
+{% if c.eh_cliente_ativo and c.data_inicio %}
+<section class="cartao">
+  <h3>Pós-venda
+    <a href="{{ url_for('pos_venda.detalhe', id=c.id) }}" class="botao"
+       style="float: right; font-size: 12px;">Ver marcos</a>
+  </h3>
+  {% if pos_venda_obj %}
+    <div class="qualif-resumo">
+      <span>{{ pos_venda_obj.marcos_realizados }}/5 marcos</span>
+      {% set s = pos_venda_obj.saude %}
+      {% if 'Verde' in s %}
+        <span class="badge badge-concluido">{{ s }}</span>
+      {% elif 'Amarelo' in s %}
+        <span class="badge badge-hoje">{{ s }}</span>
+      {% else %}
+        <span class="badge badge-atrasado">{{ s }}</span>
+      {% endif %}
+    </div>
+  {% else %}
+    <p class="texto-longo">Nenhum marco registrado. Clique em "Ver marcos" para acompanhar o pós-venda.</p>
+  {% endif %}
+</section>
+{% endif %}
+
+<section class="cartao" id="atividades">
+  <h3>Histórico de Atividades</h3>
+
+  <form method="post" action="{{ url_for('contas.nova_atividade', id=c.id) }}" class="atv-form">
+    <div class="atv-form-linha">
+      <div class="atv-campo">
+        <label for="atv-data">Data</label>
+        <input type="date" id="atv-data" name="data" required
+               value="{{ hoje }}"
+               style="width: 100%;">
+      </div>
+      <div class="atv-campo">
+        <label for="atv-tipo">Tipo</label>
+        <select id="atv-tipo" name="tipo" required style="width: 100%;">
+          <option value="">Selecione...</option>
+          {% for t in tipos_atividade %}
+            <option value="{{ t }}">{{ t }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <div class="atv-campo" style="margin-top: 8px;">
+      <label for="atv-resumo">O que aconteceu?</label>
+      <textarea id="atv-resumo" name="resumo" rows="2" required
+                placeholder="Ex.: Visitei a loja, conversei com o dono sobre DRE..."
+                style="width: 100%;"></textarea>
+    </div>
+    <button type="submit" class="botao botao-principal" style="margin-top: 8px;">Registrar atividade</button>
+  </form>
+
+  {% if atividades_lista %}
+  <div class="atv-lista" style="margin-top: 16px;">
+    {% for atv in atividades_lista %}
+    <div class="atv-item">
+      <div class="atv-item-cabecalho">
+        <span class="atv-tipo-badge">{{ atv.tipo }}</span>
+        <span class="atv-data">{{ atv.data.strftime('%d/%m/%Y') }}</span>
+        <form method="post" action="{{ url_for('contas.excluir_atividade', id=c.id, atv_id=atv.id) }}"
+              style="margin-left: auto;"
+              onsubmit="return confirm('Excluir esta atividade?');">
+          <button type="submit" class="botao-link atv-excluir">excluir</button>
+        </form>
+      </div>
+      <p class="atv-resumo">{{ atv.resumo }}</p>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+    <p class="texto-longo" style="margin-top: 12px;">Nenhuma atividade registrada. Use o formulário acima para registrar visitas, ligações e contatos.</p>
   {% endif %}
 </section>
 

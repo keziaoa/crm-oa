@@ -8,8 +8,23 @@ com o cohab-control), nada disso muda — só muda o endereço do banco em
 config.py. Se um dia o cohab-control expuser os clientes por uma API em vez
 de uma tabela, basta reescrever este repositório, sem tocar no resto.
 """
+from app.repositories.atividade_repo import AtividadeRepository
+from app.repositories.cadencia_repo import CadenciaRepository
 from app.repositories.cliente_repo import ClienteRepository
+from app.repositories.diagnostico_repo import DiagnosticoRepository, PropostaRepository
+from app.repositories.gate_repo import GateRepository
+from app.repositories.pos_venda_repo import PosVendaRepository
 
+atividades = AtividadeRepository()
+cadencias = CadenciaRepository()
 clientes = ClienteRepository()
+diagnosticos = DiagnosticoRepository()
+gates = GateRepository()
+pos_vendas = PosVendaRepository()
+propostas = PropostaRepository()
 
-__all__ = ["clientes", "ClienteRepository"]
+__all__ = ["atividades", "cadencias", "clientes", "diagnosticos", "gates",
+           "pos_vendas", "propostas", "AtividadeRepository",
+           "CadenciaRepository", "ClienteRepository",
+           "DiagnosticoRepository", "GateRepository", "PosVendaRepository",
+           "PropostaRepository"]

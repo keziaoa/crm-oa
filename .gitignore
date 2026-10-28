@@ -19,3 +19,4 @@ instance/
 .DS_Store
 .vscode/
 .idea/
+.claude/

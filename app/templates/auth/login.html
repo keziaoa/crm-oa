@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login — CRM Comercial ÔA</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="login-body">
+  <div class="login-container">
+    <div class="login-marca">
+      <span class="logo">ÔA</span>
+      <div>
+        <h1>CRM Comercial ÔA</h1>
+        <p class="sub">Respire. A gestão é com a gente.</p>
+      </div>
+    </div>
+
+    {% with mensagens = get_flashed_messages(with_categories=true) %}
+      {% if mensagens %}
+        <div class="avisos">
+          {% for categoria, texto in mensagens %}
+            <div class="aviso aviso-{{ categoria }}">{{ texto }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <form method="post" class="login-form">
+      <div class="campo">
+        <label for="login">Usuário</label>
+        <input type="text" id="login" name="login" required autofocus
+               placeholder="Seu login">
+      </div>
+      <div class="campo">
+        <label for="senha">Senha</label>
+        <input type="password" id="senha" name="senha" required
+               placeholder="Sua senha">
+      </div>
+      <button type="submit" class="botao botao-principal login-botao">Entrar</button>
+    </form>
+
+    <a href="{{ url_for('auth.esqueci_senha') }}" class="link-esqueci">Esqueceu a senha?</a>
+
+    <p class="login-rodape">ÔA Gestão Especializada · Sistema local</p>
+  </div>
+</body>
+</html>

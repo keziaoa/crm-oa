@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}Gate — {{ cliente.conta_id }} — CRM Comercial ÔA{% endblock %}
+
+{% block conteudo %}
+<div class="cabecalho-pagina">
+  <div>
+    <p class="migalha">
+      <a href="{{ url_for('contas.lista') }}">Contas</a> ›
+      <a href="{{ url_for('contas.detalhe', id=cliente.id) }}">{{ cliente.conta_id }}</a> ›
+      Gate
+    </p>
+    <h2>Ficha de Passagem — {{ cliente.nome_fantasia }}</h2>
+    <p class="nota">
+      {% if gate_obj %}
+        {{ gate_obj.itens_sim }}/8 itens confirmados
+        {% if gate_obj.liberado %}
+          · <span class="badge badge-concluido">Liberado p/ Setup</span>
+        {% else %}
+          · <span class="badge badge-hoje">Faltam {{ 8 - gate_obj.itens_sim }}</span>
+        {% endif %}
+      {% else %}
+        Nenhum item confirmado ainda. Preencha o checklist abaixo.
+      {% endif %}
+    </p>
+  </div>
+</div>
+
+<div class="cartao gate-info">
+  <p>Só muda para <strong>"Liberado p/ Setup"</strong> quando os <strong>8 itens</strong>
+     estiverem confirmados. Só aqui a Operação recebe o cliente.</p>
+</div>
+
+<form method="post" action="{{ url_for('gate.gate', id=cliente.id) }}">
+  {% for i in range(8) %}
+  {% set num = i + 1 %}
+  {% set item_campo = 'item_' ~ num %}
+  {% set obs_campo = 'obs_' ~ num %}
+  {% set marcado = valores.get(item_campo, false) %}
+  <div class="cartao gate-item {% if marcado %}gate-item-ok{% endif %}">
+    <div class="gate-item-header">
+      <label class="gate-check-label">
+        <input type="hidden" name="{{ item_campo }}" value="0">
+        <input type="checkbox" name="{{ item_campo }}" value="1"
+               class="gate-checkbox" {% if marcado %}checked{% endif %}>
+        <span class="gate-num">{{ num }}</span>
+        <span class="gate-texto">{{ gate_itens[i] }}</span>
+      </label>
+    </div>
+    <div class="gate-obs">
+      <input type="text" name="{{ obs_campo }}" placeholder="Observação (opcional)"
+             value="{{ valores.get(obs_campo, '') }}" class="campo-texto campo-full">
+    </div>
+  </div>
+  {% endfor %}
+
+  <div class="gate-acoes">
+    <button type="submit" class="botao botao-principal">Salvar Gate</button>
+    <a href="{{ url_for('contas.detalhe', id=cliente.id) }}" class="botao">Voltar</a>
+  </div>
+</form>
+
+<div class="cartao" style="margin-top: 16px;">
+  <h3>Referência dos 8 itens</h3>
+  <table class="tabela">
+    <thead>
+      <tr><th>#</th><th>Item</th></tr>
+    </thead>
+    <tbody>
+      {% for item in gate_itens %}
+      <tr>
+        <td>{{ loop.index }}</td>
+        <td>{{ item }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

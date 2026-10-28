@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Esqueci a senha — CRM Comercial ÔA</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="login-body">
+  <div class="login-container">
+    <div class="login-marca">
+      <span class="logo">ÔA</span>
+      <div>
+        <h1>CRM Comercial ÔA</h1>
+        <p class="sub">Respire. A gestão é com a gente.</p>
+      </div>
+    </div>
+
+    <div class="cartao-esqueci">
+      <h2>Esqueceu a senha?</h2>
+
+      <p>Como o CRM ÔA roda <strong>só no seu computador</strong> (sem internet),
+         não tem como enviar e-mail de recuperação.</p>
+
+      <h3>O que fazer:</h3>
+      <ol>
+        <li><strong>Peça a outro usuário do sistema</strong> para ir em
+          <em>Usuários &gt; Editar &gt; Redefinir senha</em> e criar uma nova senha para você.</li>
+        <li><strong>Se ninguém mais tem acesso</strong>, use o script de emergência:
+          <ol type="a">
+            <li>Abra o Prompt de Comando (cmd) na pasta do CRM</li>
+            <li>Execute: <code>.venv\Scripts\python.exe resetar_senha.py</code></li>
+            <li>O admin voltará à senha padrão <strong>oa2026</strong></li>
+          </ol>
+        </li>
+      </ol>
+
+      <a href="{{ url_for('auth.login') }}" class="botao botao-principal"
+         style="display: inline-block; margin-top: 16px;">Voltar ao login</a>
+    </div>
+
+    <p class="login-rodape">ÔA Gestão Especializada · Sistema local</p>
+  </div>
+</body>
+</html>

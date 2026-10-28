@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block title %}Proposta #{{ prop.id }} — {{ cliente.conta_id }} — CRM Comercial ÔA{% endblock %}
+
+{% macro brl(n) %}{% if n is none %}A consultar{% else %}R$ {{ '{:,.0f}'.format(n).replace(',', '.') }}{% endif %}{% endmacro %}
+
+{% block conteudo %}
+<div class="cabecalho-pagina">
+  <div>
+    <p class="migalha">
+      <a href="{{ url_for('contas.lista') }}">Contas</a> ›
+      <a href="{{ url_for('contas.detalhe', id=cliente.id) }}">{{ cliente.conta_id }}</a> ›
+      Proposta #{{ prop.id }}
+    </p>
+    <h2>Proposta — {{ cliente.nome_fantasia }}</h2>
+    <p class="nota">
+      {% if prop.expirada %}
+        <span class="badge badge-atrasado">Expirada</span>
+      {% elif prop.status == 'Enviada' %}
+        <span class="badge badge-ativo">{{ prop.status }}</span>
+      {% else %}
+        <span class="badge">{{ prop.status }}</span>
+      {% endif %}
+      {% if prop.data_envio %}
+        · Enviada: {{ prop.data_envio.strftime('%d/%m/%Y') }}
+      {% endif %}
+      {% if prop.data_validade %}
+        · Válida até: {{ prop.data_validade.strftime('%d/%m/%Y') }}
+      {% endif %}
+    </p>
+  </div>
+  {% if prop.status == 'Rascunho' %}
+  <div class="acoes-topo">
+    <form method="post" action="{{ url_for('diagnostico.enviar_proposta', id=cliente.id, pid=prop.id) }}"
+          onsubmit="return confirm('Marcar como enviada hoje? A validade será de 10 dias úteis.');">
+      <button type="submit" class="botao botao-principal">Marcar como enviada</button>
+    </form>
+  </div>
+  {% endif %}
+</div>
+
+<div class="cartao proposta-resumo">
+  <h3>{{ prop.produto }}</h3>
+  <div class="proposta-grid">
+    <div class="proposta-item">
+      <span class="proposta-label">Setup</span>
+      <span class="proposta-valor">{{ brl(prop.setup) }}</span>
+    </div>
+    <div class="proposta-item">
+      <span class="proposta-label">Mensalidade base</span>
+      <span class="proposta-valor">{{ brl(prop.mensalidade) }}</span>
+    </div>
+    <div class="proposta-item">
+      <span class="proposta-label">Fidelidade</span>
+      <span class="proposta-valor">{{ prop.fidelidade_meses }} meses</span>
+    </div>
+  </div>
+
+  {% if prop.lojas_extra > 0 or prop.marcas_extra > 0 %}
+  <h4 style="margin-top: 16px;">Adicionais</h4>
+  <div class="proposta-grid">
+    {% if prop.lojas_extra > 0 %}
+    <div class="proposta-item">
+      <span class="proposta-label">Lojas extras</span>
+      <span class="proposta-valor">{{ prop.lojas_extra }} × R$ 1.200</span>
+    </div>
+    {% endif %}
+    {% if prop.marcas_extra > 0 %}
+    <div class="proposta-item">
+      <span class="proposta-label">Marcas extras</span>
+      <span class="proposta-valor">{{ prop.marcas_extra }} × R$ 700</span>
+    </div>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  <div class="proposta-total">
+    <div class="proposta-item">
+      <span class="proposta-label">Setup total</span>
+      <span class="proposta-valor destaque">{{ brl(prop.valor_setup_total) }}</span>
+    </div>
+    <div class="proposta-item">
+      <span class="proposta-label">Valor mensal total</span>
+      <span class="proposta-valor destaque">{{ brl(prop.valor_total_mensal) }}/mês</span>
+    </div>
+  </div>
+</div>
+
+{% if prop.observacoes %}
+<div class="cartao">
+  <h3>Observações</h3>
+  <p>{{ prop.observacoes }}</p>
+</div>
+{% endif %}
+
+<div class="cartao" style="margin-top: 12px;">
+  <h3>Regras da proposta</h3>
+  <ul class="regras-lista">
+    {% for r in regras %}
+    <li>{{ r }}</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}

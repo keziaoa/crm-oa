@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+{% block title %}Painel — CRM Comercial ÔA{% endblock %}
+
+{% macro pct_bar(valor, maximo, cor) %}
+<div class="ind-bar">
+  <div class="ind-bar-fill ind-bar-{{ cor }}" style="width: {{ (valor / maximo * 100) if maximo > 0 else 0 }}%;"></div>
+</div>
+{% endmacro %}
+
+{% block conteudo %}
+<div class="cabecalho-pagina">
+  <div>
+    <h2>Painel de Indicadores</h2>
+    <p class="nota">Resumo automático do funil, prioridades, conversões e distribuição por responsável e origem.</p>
+  </div>
+</div>
+
+{# ===== KPIs ===== #}
+<div class="ind-kpis">
+  <div class="ind-kpi">
+    <span class="ind-kpi-num">{{ ind.total }}</span>
+    <span class="ind-kpi-label">Total de contas</span>
+  </div>
+  <div class="ind-kpi ind-kpi-verde">
+    <span class="ind-kpi-num">{{ ind.em_prospeccao }}</span>
+    <span class="ind-kpi-label">Em prospecção</span>
+  </div>
+  <div class="ind-kpi ind-kpi-dourado">
+    <span class="ind-kpi-num">{{ ind.clientes_ativos }}</span>
+    <span class="ind-kpi-label">Clientes ativos</span>
+  </div>
+  <div class="ind-kpi">
+    <span class="ind-kpi-num">{{ cad_ativas }}</span>
+    <span class="ind-kpi-label">Cadências ativas</span>
+  </div>
+  <div class="ind-kpi">
+    <span class="ind-kpi-num">{{ ind.em_saida }}</span>
+    <span class="ind-kpi-label">Em saída</span>
+  </div>
+</div>
+
+<div class="grade">
+  {# ===== Funil por status ===== #}
+  <section class="cartao" style="grid-column: 1 / -1;">
+    <h3>Funil por status</h3>
+    <div class="ind-funil">
+      {% for s in status_funil_contagem %}
+      <div class="ind-funil-item {% if s.tipo == 'saida' %}ind-funil-saida{% endif %}">
+        <span class="ind-funil-num">{{ s.ordem }}</span>
+        <span class="ind-funil-nome">{{ s.nome }}</span>
+        <span class="ind-funil-fase">{{ s.fase }}</span>
+        <span class="ind-funil-qtd">{{ s.qtd }}</span>
+        {{ pct_bar(s.qtd, ind.total, 'saida' if s.tipo == 'saida' else 'pipeline') }}
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  {# ===== Conversões ===== #}
+  <section class="cartao">
+    <h3>Conversões</h3>
+    <p class="nota" style="margin: 0 0 12px;">Taxa de avanço entre estágios-chave.</p>
+    {% for c in conversoes %}
+    <div class="ind-conv">
+      <div class="ind-conv-header">
+        <strong>{{ c.nome }}</strong>
+        <span class="ind-conv-taxa">{{ '%.0f' % c.taxa }}%</span>
+      </div>
+      <div class="ind-conv-nums">
+        <span>Entrada: {{ c.origem + c.destino }}</span>
+        <span>Avançou: {{ c.destino }}</span>
+      </div>
+      {{ pct_bar(c.taxa, 100, 'conv') }}
+    </div>
+    {% endfor %}
+    {% if not conversoes %}
+    <p style="opacity: .5;">Sem dados suficientes.</p>
+    {% endif %}
+  </section>
+
+  {# ===== Prioridades ===== #}
+  <section class="cartao">
+    <h3>Distribuição por prioridade</h3>
+    {% for p in prioridades %}
+    {% set qtd = ind.por_prioridade.get(p, 0) %}
+    <div class="ind-prio-item">
+      <span class="prio prio-{{ p|lower }}">{{ p }}</span>
+      <span class="ind-prio-qtd">{{ qtd }}</span>
+      {{ pct_bar(qtd, ind.total, p|lower) }}
+    </div>
+    {% endfor %}
+  </section>
+
+  {# ===== Por responsável ===== #}
+  <section class="cartao">
+    <h3>Por responsável</h3>
+    {% if ind.por_responsavel %}
+    {% for resp, qtd in ind.por_responsavel.items() %}
+    <div class="ind-resp-item">
+      <span class="ind-resp-nome">{{ resp }}</span>
+      <span class="ind-resp-qtd">{{ qtd }}</span>
+      {{ pct_bar(qtd, ind.total, 'resp') }}
+    </div>
+    {% endfor %}
+    {% set sem_resp = ind.total - ind.por_responsavel.values()|sum %}
+    {% if sem_resp > 0 %}
+    <div class="ind-resp-item" style="opacity: .5;">
+      <span class="ind-resp-nome">Sem responsável</span>
+      <span class="ind-resp-qtd">{{ sem_resp }}</span>
+    </div>
+    {% endif %}
+    {% else %}
+    <p style="opacity: .5;">Nenhuma conta com responsável definido.</p>
+    {% endif %}
+  </section>
+
+  {# ===== Por origem ===== #}
+  <section class="cartao">
+    <h3>Por origem</h3>
+    {% if ind.por_origem %}
+    {% for origem, qtd in ind.por_origem|dictsort(by='value', reverse=true) %}
+    <div class="ind-resp-item">
+      <span class="ind-resp-nome">{{ origem }}</span>
+      <span class="ind-resp-qtd">{{ qtd }}</span>
+      {{ pct_bar(qtd, ind.total, 'origem') }}
+    </div>
+    {% endfor %}
+    {% set sem_origem = ind.total - ind.por_origem.values()|sum %}
+    {% if sem_origem > 0 %}
+    <div class="ind-resp-item" style="opacity: .5;">
+      <span class="ind-resp-nome">Sem origem</span>
+      <span class="ind-resp-qtd">{{ sem_origem }}</span>
+    </div>
+    {% endif %}
+    {% else %}
+    <p style="opacity: .5;">Nenhuma conta com origem definida.</p>
+    {% endif %}
+  </section>
+
+  {# ===== Saúde dos clientes ===== #}
+  {% if ind.clientes_ativos > 0 %}
+  <section class="cartao">
+    <h3>Saúde dos clientes ativos</h3>
+    <div class="ind-saude-grid">
+      <div class="ind-saude-item ind-saude-verde">
+        <span class="ind-saude-num">{{ saude_counts.Verde }}</span>
+        <span>Verde (Saudável)</span>
+      </div>
+      <div class="ind-saude-item ind-saude-amarelo">
+        <span class="ind-saude-num">{{ saude_counts.Amarelo }}</span>
+        <span>Amarelo (Atenção)</span>
+      </div>
+      <div class="ind-saude-item ind-saude-vermelho">
+        <span class="ind-saude-num">{{ saude_counts.Vermelho }}</span>
+        <span>Vermelho (Risco)</span>
+      </div>
+    </div>
+  </section>
+  {% endif %}
+</div>
+{% endblock %}

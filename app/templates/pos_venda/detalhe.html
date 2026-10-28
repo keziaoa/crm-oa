@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %}Pós-venda {{ cliente.conta_id }} — CRM Comercial ÔA{% endblock %}
+
+{% block conteudo %}
+<div class="cabecalho-pagina">
+  <div>
+    <p class="migalha">
+      <a href="{{ url_for('pos_venda.painel') }}">Pós-venda</a> ›
+      <a href="{{ url_for('contas.detalhe', id=cliente.id) }}">{{ cliente.conta_id }}</a> ›
+      Marcos
+    </p>
+    <h2>Pós-venda — {{ cliente.nome_fantasia }}</h2>
+    <p class="nota">
+      Kickoff: {{ cliente.data_inicio.strftime('%d/%m/%Y') }}
+      · {% if pv %}{{ pv.marcos_realizados }}/5 marcos realizados{% else %}Nenhum marco registrado{% endif %}
+    </p>
+  </div>
+</div>
+
+{# Saúde da conta #}
+<div class="cartao pv-saude-card">
+  <h3>Saúde da conta</h3>
+  <form method="post" action="{{ url_for('pos_venda.detalhe', id=cliente.id) }}" class="pv-saude-form">
+    {% set saude_atual = pv.saude if pv else 'Verde (Saudável)' %}
+    {% for opcao in opcoes_saude %}
+    <label class="pv-saude-opcao {% if opcao == saude_atual %}pv-saude-selecionada{% endif %}
+                  {% if 'Verde' in opcao %}pv-saude-verde{% elif 'Amarelo' in opcao %}pv-saude-amarelo{% else %}pv-saude-vermelho{% endif %}">
+      <input type="radio" name="saude" value="{{ opcao }}"
+             {% if opcao == saude_atual %}checked{% endif %}>
+      {{ opcao }}
+    </label>
+    {% endfor %}
+    <button type="submit" class="botao botao-principal" style="margin-left: 12px;">Salvar saúde</button>
+  </form>
+</div>
+
+{# Timeline dos marcos #}
+<div class="pv-timeline">
+{% for m in marcos %}
+{% set num = loop.index %}
+<div class="cartao pv-marco {% if m.status == 'Realizado' %}pv-marco-ok{% endif %}
+     {% if m.atrasado %}pv-marco-atrasado{% endif %}">
+  <div class="pv-marco-header">
+    <span class="pv-marco-badge {% if m.status == 'Realizado' %}pv-badge-realizado
+          {% elif m.status == 'Agendado' %}pv-badge-agendado
+          {% elif m.status == 'Não realizado' %}pv-badge-nao-realizado
+          {% else %}pv-badge-pendente{% endif %}">
+      {{ m.marco }}
+    </span>
+    <div class="pv-marco-info">
+      <strong>{{ m.nome }}</strong>
+      <span class="pv-marco-data">
+        Previsto: {{ m.data_prevista.strftime('%d/%m/%Y') }}
+        {% if m.atrasado %}<span class="badge badge-atrasado">Atrasado</span>{% endif %}
+      </span>
+      {% if m.data_realizado %}
+        <span class="pv-marco-data texto-ok">Realizado em: {{ m.data_realizado.strftime('%d/%m/%Y') }}</span>
+      {% endif %}
+    </div>
+    <span class="badge {% if m.status == 'Realizado' %}badge-concluido
+          {% elif m.status == 'Agendado' %}badge-hoje
+          {% elif m.status == 'Não realizado' %}badge-atrasado
+          {% else %}{% endif %}">{{ m.status }}</span>
+  </div>
+
+  {% if m.obs %}
+    <p class="pv-marco-obs"><strong>Obs:</strong> {{ m.obs }}</p>
+  {% endif %}
+
+  <form method="post" action="{{ url_for('pos_venda.registrar_marco', id=cliente.id, num=num) }}"
+        class="pv-marco-form">
+    <select name="status" class="campo-select">
+      {% for op in opcoes_marco %}
+      <option value="{{ op }}" {% if op == m.status %}selected{% endif %}>{{ op }}</option>
+      {% endfor %}
+    </select>
+    <input type="text" name="obs" placeholder="Observação do contato"
+           value="{{ m.obs }}" class="campo-texto" style="flex: 1;">
+    <button type="submit" class="botao botao-mini">Salvar</button>
+  </form>
+</div>
+{% endfor %}
+</div>
+
+<div class="cartao" style="margin-top: 16px;">
+  <h3>Referência dos marcos</h3>
+  <table class="tabela">
+    <thead>
+      <tr><th>Marco</th><th>Quando</th><th>Objetivo</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>D+7</td><td>7 dias</td><td>Kickoff ocorreu? Acessos e documentos chegando?</td></tr>
+      <tr><td>D+21</td><td>21 dias</td><td>Entendeu o diagnóstico e o plano de Setup?</td></tr>
+      <tr><td>D+45</td><td>45 dias</td><td>Treinamentos/cadastros andando? Algum incômodo?</td></tr>
+      <tr><td>D+90</td><td>90 dias</td><td>1º fechamento e reunião de gestão? Pedir depoimento.</td></tr>
+      <tr><td>D+150</td><td>150 dias</td><td>30 dias antes da fidelidade: continua? Pedir indicação.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<p style="margin-top: 12px;">
+  <a href="{{ url_for('contas.detalhe', id=cliente.id) }}" class="botao">Voltar para {{ cliente.conta_id }}</a>
+</p>
+{% endblock %}

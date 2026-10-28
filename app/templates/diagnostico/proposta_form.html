@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block title %}Nova Proposta {{ cliente.conta_id }} — CRM Comercial ÔA{% endblock %}
+
+{% macro brl(n) %}{% if n is none %}A consultar{% else %}R$ {{ '{:,.0f}'.format(n).replace(',', '.') }}{% endif %}{% endmacro %}
+
+{% block conteudo %}
+<div class="cabecalho-pagina">
+  <div>
+    <p class="migalha">
+      <a href="{{ url_for('contas.lista') }}">Contas</a> ›
+      <a href="{{ url_for('contas.detalhe', id=cliente.id) }}">{{ cliente.conta_id }}</a> ›
+      Nova proposta
+    </p>
+    <h2>Gerar Proposta — {{ cliente.nome_fantasia }}</h2>
+  </div>
+</div>
+
+{% if diag and diag.produto_recomendado %}
+<div class="cartao">
+  <p><strong>Diagnóstico recomendou:</strong> {{ diag.produto_recomendado }}</p>
+  {% if diag.exclusoes %}<p class="nota">Exclusões: {{ diag.exclusoes }}</p>{% endif %}
+</div>
+{% endif %}
+
+<div class="cartao">
+  <h3>Tabela de preços</h3>
+  <table class="tabela">
+    <thead>
+      <tr><th>Produto</th><th>Setup</th><th>Mensalidade</th><th>Fidelidade</th></tr>
+    </thead>
+    <tbody>
+      {% for p in produtos %}
+      <tr>
+        <td><strong>{{ p.nome }}</strong><br><small>{{ p.escopo }}</small></td>
+        <td>{{ brl(p.setup) }}</td>
+        <td>{{ brl(p.mensalidade) }}</td>
+        <td>{{ p.fidelidade_meses }} meses</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<form method="post">
+  <div class="cartao">
+    <h3>Configurar proposta</h3>
+    <div class="campo">
+      <label for="produto">Produto principal</label>
+      <select id="produto" name="produto" required>
+        <option value="">— selecionar —</option>
+        {% for p in produtos[:2] %}
+        <option value="{{ p.nome }}"
+          {{ 'selected' if diag and diag.produto_recomendado == p.nome }}>
+          {{ p.nome }} ({{ brl(p.mensalidade) }}/mês)
+        </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div style="display: flex; gap: 16px;">
+      <div class="campo" style="flex: 1;">
+        <label for="lojas_extra">Lojas extras (R$ 1.200/mês cada)</label>
+        <input type="number" id="lojas_extra" name="lojas_extra" value="0" min="0" max="10">
+      </div>
+      <div class="campo" style="flex: 1;">
+        <label for="marcas_extra">Marcas extras (R$ 700/mês cada)</label>
+        <input type="number" id="marcas_extra" name="marcas_extra" value="0" min="0" max="10">
+      </div>
+    </div>
+
+    <div class="campo" style="max-width: 260px;">
+      <label for="data_envio">Data de envio (deixe vazio para rascunho)</label>
+      <input type="date" id="data_envio" name="data_envio">
+    </div>
+
+    <div class="campo">
+      <label for="observacoes">Observações</label>
+      <textarea id="observacoes" name="observacoes" rows="2"
+                placeholder="Condições especiais, combinados..."></textarea>
+    </div>
+  </div>
+
+  <div class="cartao" style="margin-top: 12px;">
+    <h3>Regras da proposta</h3>
+    <ul class="regras-lista">
+      {% for r in regras %}
+      <li>{{ r }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <div class="acoes-form" style="margin-top: 16px;">
+    <button type="submit" class="botao botao-principal">Gerar proposta</button>
+    <a href="{{ url_for('contas.detalhe', id=cliente.id) }}" class="botao">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

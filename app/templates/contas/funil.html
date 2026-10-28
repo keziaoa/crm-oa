@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}Funil — CRM Comercial ÔA{% endblock %}
+
+{% block conteudo %}
+<style>.conteudo { max-width: none; }</style>
+<div class="cabecalho-pagina">
+  <div>
+    <p class="migalha"><a href="{{ url_for('contas.lista') }}">Contas</a> › Funil</p>
+    <h2>Funil de Vendas</h2>
+  </div>
+  <a href="{{ url_for('contas.nova') }}" class="botao botao-principal">+ Nova conta</a>
+</div>
+
+{# Legenda das fases #}
+<div class="funil-legenda">
+  <span class="legenda-item legenda-precontato">Pré-contato</span>
+  <span class="legenda-item legenda-fase1">Fase 1</span>
+  <span class="legenda-item legenda-fase2">Fase 2</span>
+  <span class="legenda-item legenda-fase3">Fase 3</span>
+  <span class="legenda-item legenda-fase4">Fase 4</span>
+  <span class="legenda-item legenda-fase5">Fase 5</span>
+  <span class="legenda-item legenda-fase6">Fase 6</span>
+  <span class="legenda-item legenda-fase78">Fases 7–8</span>
+  <span class="legenda-item legenda-saida">Saída</span>
+</div>
+
+<div class="kanban-container">
+  <div class="kanban-board">
+    {% for ordem, nome, fase, tipo in status_funil %}
+    <div class="kanban-coluna {% if tipo == 'saida' %}kanban-coluna-saida{% endif %}"
+         data-status="{{ nome }}">
+      <div class="kanban-cabecalho">
+        <span class="kanban-num">{{ ordem }}</span>
+        <div class="kanban-titulo">
+          <strong>{{ nome }}</strong>
+          <small class="kanban-fase">{{ fase }}</small>
+        </div>
+        <span class="kanban-contagem">{{ agrupado[nome]|length }}</span>
+      </div>
+
+      <div class="kanban-cards">
+        {% for c in agrupado[nome] %}
+        <div class="kanban-card" data-id="{{ c.id }}">
+          <div class="kanban-card-topo">
+            <a href="{{ url_for('contas.detalhe', id=c.id) }}" class="kanban-card-id">{{ c.conta_id }}</a>
+            {% if c.prioridade != "Pendente" %}
+            <span class="prio prio-{{ c.prioridade|lower }}">{{ c.prioridade }}</span>
+            {% endif %}
+          </div>
+          <div class="kanban-card-nome">{{ c.nome_fantasia }}</div>
+          {% if c.responsavel %}
+          <div class="kanban-card-resp">{{ c.responsavel }}</div>
+          {% endif %}
+          {% if c.cidade %}
+          <div class="kanban-card-cidade">{{ c.cidade }}</div>
+          {% endif %}
+
+          {# Botão de mover — só mostra transições válidas #}
+          {% if transicoes[nome] %}
+          <div class="kanban-card-acoes">
+            <form method="post" action="{{ url_for('contas.mover', id=c.id) }}" class="form-mover">
+              <select name="status" class="select-mover" onchange="this.form.submit()">
+                <option value="">Mover para…</option>
+                {% if proximo[nome] %}
+                <option value="{{ proximo[nome] }}">▸ {{ proximo[nome] }}</option>
+                {% endif %}
+                {% for destino in transicoes[nome] %}
+                  {% if destino != proximo[nome] %}
+                  <option value="{{ destino }}">{{ destino }}</option>
+                  {% endif %}
+                {% endfor %}
+              </select>
+            </form>
+          </div>
+          {% endif %}
+        </div>
+        {% endfor %}
+
+        {% if not agrupado[nome] %}
+        <div class="kanban-vazio">—</div>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

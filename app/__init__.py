@@ -7,29 +7,61 @@ dados, registra as páginas (rotas) e cria as tabelas na primeira execução.
 from flask import Flask
 
 from app.config import Config
-from app.extensions import db
+from app.extensions import db, login_manager, migrate
 
 
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
 
-    # Liga o banco de dados ao app.
     db.init_app(app)
+    migrate.init_app(app, db)
+    login_manager.init_app(app)
 
-    # Registra as páginas do site.
+    @login_manager.user_loader
+    def carregar_usuario(user_id):
+        from app.models.usuario import Usuario
+        return db.session.get(Usuario, int(user_id))
+
     from app.routes.main import bp as main_bp
     from app.routes.contas import bp as contas_bp
+    from app.routes.auth import bp as auth_bp
+    from app.routes.cadencia import bp as cadencia_bp
+    from app.routes.diagnostico import bp as diagnostico_bp
+    from app.routes.gate import bp as gate_bp
+    from app.routes.pos_venda import bp as pos_venda_bp
+    from app.routes.painel import bp as painel_bp
     app.register_blueprint(main_bp)
     app.register_blueprint(contas_bp)
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(cadencia_bp)
+    app.register_blueprint(diagnostico_bp)
+    app.register_blueprint(gate_bp)
+    app.register_blueprint(pos_venda_bp)
+    app.register_blueprint(painel_bp)
 
-    # Na primeira vez, cria o arquivo do banco e as tabelas (ex.: clientes).
     with app.app_context():
-        from app import models  # garante que os modelos sejam conhecidos
-        db.create_all()
-        _garantir_colunas_sqlite()
+        from app import models  # noqa: F401 — registra as tabelas no SQLAlchemy
+
+        if db.engine.dialect.name == "sqlite":
+            db.create_all()
+            _garantir_colunas_sqlite()
+        # PostgreSQL: as tabelas são criadas via "flask db upgrade" (Alembic).
+
+        _criar_usuario_padrao()
 
     return app
+
+
+def _criar_usuario_padrao():
+    """Cria o usuário admin na primeira execução, se não existir."""
+    from app.models.usuario import Usuario
+
+    if not Usuario.query.filter_by(login="admin").first():
+        u = Usuario(nome="Administrador", login="admin")
+        u.definir_senha("oa2026")
+        db.session.add(u)
+        db.session.commit()
 
 
 def _garantir_colunas_sqlite():

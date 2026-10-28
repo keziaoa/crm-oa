@@ -184,3 +184,349 @@ th { color: var(--verde-escuro); font-size: 13px; }
 .legenda-leve { font-weight: 400; font-size: 12px; opacity: .6; }
 .dica-plano { justify-content: flex-end; }
 .dica-plano small { font-weight: 400; color: var(--quase-preto); opacity: .7; }
+
+/* ===================== Login ===================== */
+.login-body { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+.login-container { width: 100%; max-width: 400px; padding: 0 16px; }
+.login-marca { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; justify-content: center; }
+.login-marca h1 { margin: 0; font-size: 20px; color: var(--verde-escuro); }
+.login-marca .sub { margin: 2px 0 0; font-size: 12px; opacity: .7; }
+.login-form { background: #fff; padding: 24px; border-radius: 14px;
+  border: 1px solid rgba(14, 66, 58, .12); }
+.login-form .campo { margin-bottom: 14px; }
+.login-form .campo input { width: 100%; }
+.login-botao { width: 100%; padding: 12px; font-size: 15px; margin-top: 4px; }
+.login-rodape { text-align: center; font-size: 11px; opacity: .5; margin-top: 20px; }
+.usuario-info { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+.usuario-nome { font-size: 13px; opacity: .85; }
+.botao-logout { background: transparent; border: 1px solid rgba(239, 233, 221, .4);
+  color: var(--areia); padding: 4px 12px; border-radius: 8px; font-size: 12px;
+  cursor: pointer; font-family: inherit; font-weight: 600; text-decoration: none; }
+.botao-logout:hover { background: rgba(239, 233, 221, .15); }
+
+/* ===================== Fase 3 — Funil Kanban ===================== */
+.funil-legenda { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+.legenda-item { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 12px; }
+.legenda-precontato { background: #e4efe3; color: #2f5a2c; }
+.legenda-fase1 { background: #d6eaf8; color: #1a5276; }
+.legenda-fase2 { background: #fdebd0; color: #7e5109; }
+.legenda-fase3 { background: #f5e6ff; color: #6c3483; }
+.legenda-fase4 { background: #d5f5e3; color: #1e8449; }
+.legenda-fase5 { background: #fadbd8; color: #922b21; }
+.legenda-fase6 { background: #fff2d6; color: #8a6412; }
+.legenda-fase78 { background: #d4efdf; color: #1a5432; }
+.legenda-saida { background: #f1ece1; color: #6b6350; }
+
+.kanban-container { overflow-x: auto; padding-bottom: 16px; }
+
+.kanban-board { display: flex; gap: 10px; min-width: max-content; }
+
+.kanban-coluna {
+  width: 220px; min-width: 220px; flex-shrink: 0;
+  background: #fff; border: 1px solid rgba(14, 66, 58, .12); border-radius: 12px;
+  display: flex; flex-direction: column; max-height: calc(100vh - 220px);
+}
+.kanban-coluna-saida { background: #faf5ef; }
+
+.kanban-cabecalho {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 12px; border-bottom: 1px solid rgba(14, 66, 58, .1);
+  position: sticky; top: 0; background: inherit; border-radius: 12px 12px 0 0; z-index: 1;
+}
+.kanban-num {
+  background: var(--verde-escuro); color: var(--areia);
+  width: 22px; height: 22px; border-radius: 50%; display: inline-flex;
+  align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0;
+}
+.kanban-coluna-saida .kanban-num { background: var(--dourado); color: var(--quase-preto); }
+.kanban-titulo { flex: 1; min-width: 0; }
+.kanban-titulo strong { display: block; font-size: 12px; line-height: 1.3; color: var(--verde-escuro); }
+.kanban-fase { display: block; font-size: 10px; opacity: .6; line-height: 1.2; }
+.kanban-contagem {
+  background: var(--areia); color: var(--verde-escuro); font-size: 12px; font-weight: 700;
+  min-width: 22px; height: 22px; border-radius: 11px; display: inline-flex;
+  align-items: center; justify-content: center; padding: 0 6px; flex-shrink: 0;
+}
+
+.kanban-cards { flex: 1; overflow-y: auto; padding: 8px; display: flex; flex-direction: column; gap: 8px; }
+
+.kanban-card {
+  background: var(--areia); border-radius: 10px; padding: 10px 12px;
+  border: 1px solid rgba(14, 66, 58, .08); transition: box-shadow .15s;
+}
+.kanban-card:hover { box-shadow: 0 2px 8px rgba(14, 66, 58, .12); }
+
+.kanban-card-topo { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+.kanban-card-id { font-size: 12px; font-weight: 700; color: var(--verde-escuro); text-decoration: none; }
+.kanban-card-id:hover { text-decoration: underline; }
+.kanban-card-nome { font-size: 13px; font-weight: 600; color: var(--quase-preto); line-height: 1.3; margin-bottom: 4px; }
+.kanban-card-resp { font-size: 11px; color: var(--verde-claro); font-weight: 600; }
+.kanban-card-cidade { font-size: 11px; opacity: .6; }
+
+.kanban-card-acoes { margin-top: 8px; }
+.form-mover { margin: 0; }
+.select-mover {
+  width: 100%; padding: 4px 6px; border-radius: 6px;
+  border: 1px solid rgba(14, 66, 58, .2); font-size: 11px; font-family: inherit;
+  background: #fff; color: var(--quase-preto); cursor: pointer;
+}
+.select-mover:hover { border-color: var(--verde-escuro); }
+
+.kanban-vazio { text-align: center; padding: 16px 0; font-size: 13px; opacity: .4; }
+
+/* ===================== Fase 4 — Qualificação ===================== */
+.form-qualificacao { margin-top: 16px; }
+.tabela-qualificacao { width: 100%; border-collapse: collapse; background: #fff; }
+.tabela-qualificacao th, .tabela-qualificacao td { padding: 12px 10px;
+  border-bottom: 1px solid rgba(14, 66, 58, .1); text-align: left; font-size: 14px; }
+.tabela-qualificacao th { color: var(--verde-escuro); font-size: 12px; text-transform: uppercase; }
+.col-nota { text-align: center !important; width: 80px; }
+.radio-nota { cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+.radio-nota input { display: none; }
+.radio-label {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 38px; height: 38px; border-radius: 50%; border: 2px solid rgba(14, 66, 58, .2);
+  font-size: 15px; font-weight: 700; color: var(--verde-escuro); transition: all .15s;
+}
+.radio-nota input:checked + .radio-label {
+  background: var(--verde-escuro); color: var(--areia); border-color: var(--verde-escuro);
+}
+.radio-nota:hover .radio-label { border-color: var(--verde-escuro); }
+
+.tabela-ref-notas { width: 100%; border-collapse: collapse; font-size: 12px; }
+.tabela-ref-notas th, .tabela-ref-notas td { padding: 6px 8px;
+  border-bottom: 1px solid rgba(14, 66, 58, .08); vertical-align: top; }
+.tabela-ref-notas th { color: var(--verde-escuro); }
+
+.qualif-resumo { display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
+  padding: 12px 14px; background: var(--areia); border-radius: 10px; margin-top: 12px; }
+.qualif-nota { text-align: center; font-size: 12px; }
+.qualif-nota strong { display: block; font-size: 16px; color: var(--verde-escuro); }
+
+/* ===================== Gestão de Usuários ===================== */
+.tabela { width: 100%; border-collapse: collapse; background: #fff;
+  border-radius: 12px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+.tabela th, .tabela td { padding: 10px 14px; text-align: left; font-size: 14px;
+  border-bottom: 1px solid rgba(14, 66, 58, .08); }
+.tabela th { background: var(--verde-escuro); color: var(--areia); font-size: 12px;
+  text-transform: uppercase; letter-spacing: .3px; }
+.tabela code { background: rgba(14, 66, 58, .06); padding: 2px 6px; border-radius: 4px;
+  font-size: 13px; }
+.linha-inativa { opacity: .5; }
+.acoes-celula { text-align: right; }
+.botao-mini { padding: 4px 10px; font-size: 12px; border-radius: 6px;
+  background: var(--verde-escuro); color: var(--areia); text-decoration: none;
+  font-weight: 600; display: inline-block; }
+.botao-mini:hover { opacity: .85; }
+.badge-ativo { background: #d5f5e3; color: #1e8449; }
+.badge-inativo { background: #fadbd8; color: #922b21; }
+
+.link-esqueci { display: block; text-align: center; margin-top: 12px;
+  font-size: 13px; color: var(--verde-escuro); opacity: .7; }
+.link-esqueci:hover { opacity: 1; }
+
+.cartao-esqueci { background: #fff; border-radius: 14px; padding: 28px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.08); text-align: left; }
+.cartao-esqueci h2 { margin: 0 0 12px; color: var(--verde-escuro); font-size: 20px; }
+.cartao-esqueci h3 { margin: 16px 0 8px; color: var(--verde-escuro); font-size: 15px; }
+.cartao-esqueci ol { padding-left: 20px; font-size: 14px; line-height: 1.7; }
+.cartao-esqueci code { background: rgba(14, 66, 58, .08); padding: 2px 6px;
+  border-radius: 4px; font-size: 12px; }
+.usuario-nome { text-decoration: none; color: var(--areia); }
+
+/* ===================== Fase 5 — Cadência ===================== */
+.linha-atrasada { background: #fdf2f2; }
+.badge-atrasado { background: #fadbd8; color: #922b21; font-weight: 700; }
+.badge-concluido { background: #d5f5e3; color: #1e8449; }
+.badge-hoje { background: #fdebd0; color: #7e5109; font-weight: 700; }
+.texto-ok { color: #1e8449; font-weight: 600; }
+
+.cadencia-timeline { display: flex; flex-direction: column; gap: 12px; }
+.cadencia-step { padding: 14px 16px; border-radius: 10px; border-left: 4px solid rgba(14,66,58,.15); }
+.step-realizado { border-left-color: var(--verde-claro); background: rgba(213,245,227,.3); }
+.step-atrasado { border-left-color: #e74c3c; background: rgba(253,242,242,.6); }
+.step-pendente { border-left-color: rgba(14,66,58,.15); background: #fff; }
+
+.step-header { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.step-rotulo { font-size: 16px; font-weight: 700; color: var(--verde-escuro); }
+.step-data { font-size: 13px; opacity: .7; }
+.step-instrucao { font-size: 13px; margin: 6px 0 0; opacity: .65; }
+.step-obs { font-size: 13px; margin: 4px 0 0; }
+
+.step-form { margin-top: 8px; }
+.step-form-linha { display: flex; gap: 8px; align-items: center; }
+.step-input { flex: 1; padding: 6px 10px; border: 1px solid rgba(14,66,58,.15);
+  border-radius: 6px; font-size: 13px; font-family: inherit; }
+
+.cadencia-acoes { display: flex; gap: 12px; flex-wrap: wrap; }
+
+/* ===================== Fase 6 — Diagnóstico e Proposta ===================== */
+.diag-bloco { margin-top: 12px; }
+.diag-bloco h3 { display: flex; align-items: center; gap: 10px; }
+.diag-num { display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; border-radius: 50%; background: var(--verde-escuro);
+  color: var(--areia); font-size: 13px; font-weight: 700; flex-shrink: 0; }
+.diag-bloco textarea { width: 100%; padding: 10px; border: 1px solid rgba(14,66,58,.15);
+  border-radius: 8px; font-size: 14px; font-family: inherit; resize: vertical; }
+.diag-texto { font-size: 14px; line-height: 1.6; white-space: pre-wrap; }
+.diag-vazio { font-size: 13px; opacity: .4; font-style: italic; }
+
+.proposta-resumo { }
+.proposta-grid { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 8px; }
+.proposta-item { display: flex; flex-direction: column; gap: 2px; }
+.proposta-label { font-size: 11px; text-transform: uppercase; opacity: .6; font-weight: 600; }
+.proposta-valor { font-size: 16px; font-weight: 700; color: var(--verde-escuro); }
+.proposta-valor.destaque { font-size: 20px; color: var(--dourado); }
+.proposta-total { margin-top: 16px; padding-top: 16px;
+  border-top: 2px solid rgba(14,66,58,.1); display: flex; gap: 32px; }
+
+.regras-lista { padding-left: 20px; font-size: 13px; line-height: 1.8; }
+.regras-lista li { margin-bottom: 2px; }
+
+/* ===================== Fase 7 — Gate (Ficha de Passagem) ===================== */
+.gate-info { background: rgba(14, 66, 58, .06); font-size: 14px; }
+.gate-info p { margin: 0; }
+.gate-item { transition: background .2s; }
+.gate-item-ok { background: #d5f5e3; border-left: 4px solid var(--verde-claro); }
+.gate-item-header { display: flex; align-items: flex-start; gap: 8px; }
+.gate-check-label { display: flex; align-items: flex-start; gap: 10px;
+  cursor: pointer; font-size: 14px; line-height: 1.5; flex: 1; }
+.gate-checkbox { width: 20px; height: 20px; margin-top: 2px; accent-color: var(--verde-escuro);
+  cursor: pointer; flex-shrink: 0; }
+.gate-num { display: inline-flex; align-items: center; justify-content: center;
+  width: 26px; height: 26px; border-radius: 50%; font-size: 13px; font-weight: 700;
+  background: var(--verde-escuro); color: #fff; flex-shrink: 0; }
+.gate-item-ok .gate-num { background: var(--verde-claro); }
+.gate-texto { flex: 1; }
+.gate-obs { margin-top: 8px; padding-left: 56px; }
+.gate-acoes { display: flex; gap: 8px; margin-top: 16px; }
+
+/* ===================== Fase 8 — Pós-venda ===================== */
+.pv-saude-card { }
+.pv-saude-form { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.pv-saude-opcao { display: inline-flex; align-items: center; gap: 4px;
+  padding: 6px 14px; border-radius: 20px; cursor: pointer; font-size: 13px;
+  border: 2px solid transparent; transition: all .2s; }
+.pv-saude-opcao input[type="radio"] { display: none; }
+.pv-saude-verde { background: #d5f5e3; color: #1e8449; }
+.pv-saude-amarelo { background: #fdebd0; color: #7e5109; }
+.pv-saude-vermelho { background: #fadbd8; color: #922b21; }
+.pv-saude-selecionada { border-color: var(--verde-escuro); font-weight: 700; }
+
+.pv-timeline { display: flex; flex-direction: column; gap: 12px; }
+.pv-marco { transition: background .2s; }
+.pv-marco-ok { background: #d5f5e3; border-left: 4px solid var(--verde-claro); }
+.pv-marco-atrasado { border-left: 4px solid #e74c3c; }
+.pv-marco-header { display: flex; align-items: flex-start; gap: 12px; }
+.pv-marco-badge { display: inline-flex; align-items: center; justify-content: center;
+  min-width: 50px; padding: 4px 10px; border-radius: 6px; font-size: 13px;
+  font-weight: 700; flex-shrink: 0; }
+.pv-badge-realizado { background: var(--verde-claro); color: #fff; }
+.pv-badge-agendado { background: var(--dourado); color: #fff; }
+.pv-badge-pendente { background: rgba(14, 66, 58, .12); color: var(--verde-escuro); }
+.pv-badge-nao-realizado { background: #fadbd8; color: #922b21; }
+.pv-marco-info { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.pv-marco-data { font-size: 13px; opacity: .7; }
+.pv-marco-obs { font-size: 13px; margin: 8px 0 0 62px; opacity: .8; }
+.pv-marco-form { display: flex; gap: 6px; align-items: center; margin-top: 8px;
+  padding-top: 8px; border-top: 1px solid rgba(14, 66, 58, .08); }
+.pv-marco-form .campo-select { padding: 4px 8px; font-size: 13px; }
+.pv-marco-form .campo-texto { padding: 4px 8px; font-size: 13px; }
+
+/* ===================== Fase 9 — Painel de Indicadores ===================== */
+.ind-kpis { display: flex; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }
+.ind-kpi { flex: 1; min-width: 140px; background: #fff; border: 1px solid rgba(14,66,58,.12);
+  border-radius: 14px; padding: 18px 16px; text-align: center; display: flex;
+  flex-direction: column; gap: 4px; }
+.ind-kpi-num { font-size: 32px; font-weight: 700; color: var(--verde-escuro); line-height: 1; }
+.ind-kpi-label { font-size: 12px; font-weight: 600; opacity: .65; text-transform: uppercase;
+  letter-spacing: .3px; }
+.ind-kpi-verde { border-left: 4px solid var(--verde-claro); }
+.ind-kpi-verde .ind-kpi-num { color: var(--verde-claro); }
+.ind-kpi-dourado { border-left: 4px solid var(--dourado); }
+.ind-kpi-dourado .ind-kpi-num { color: var(--dourado); }
+
+.ind-funil { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
+@media (max-width: 720px) { .ind-funil { grid-template-columns: 1fr; } }
+.ind-funil-item { display: flex; align-items: center; gap: 8px; padding: 8px 10px;
+  border-radius: 8px; background: var(--areia); font-size: 13px; }
+.ind-funil-saida { background: #f6ebe6; }
+.ind-funil-num { background: var(--verde-escuro); color: var(--areia); width: 22px; height: 22px;
+  border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; flex-shrink: 0; }
+.ind-funil-saida .ind-funil-num { background: var(--dourado); color: var(--quase-preto); }
+.ind-funil-nome { font-weight: 600; flex: 1; min-width: 0; white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis; }
+.ind-funil-fase { font-size: 10px; opacity: .5; display: none; }
+.ind-funil-qtd { font-weight: 700; color: var(--verde-escuro); min-width: 24px; text-align: right; }
+
+.ind-bar { height: 6px; background: rgba(14,66,58,.08); border-radius: 3px;
+  flex-shrink: 0; width: 60px; overflow: hidden; }
+.ind-bar-fill { height: 100%; border-radius: 3px; transition: width .3s; }
+.ind-bar-pipeline { background: var(--verde-claro); }
+.ind-bar-saida { background: var(--dourado); }
+.ind-bar-conv { background: var(--verde-escuro); }
+.ind-bar-a { background: #2f5a2c; }
+.ind-bar-b { background: #8a6412; }
+.ind-bar-c { background: #6b6350; }
+.ind-bar-d { background: #8c2f22; }
+.ind-bar-pendente { background: #999; }
+.ind-bar-resp { background: var(--verde-claro); }
+.ind-bar-origem { background: var(--dourado); }
+
+.ind-conv { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid rgba(14,66,58,.08); }
+.ind-conv:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.ind-conv-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+.ind-conv-header strong { font-size: 13px; }
+.ind-conv-taxa { font-size: 18px; font-weight: 700; color: var(--verde-escuro); }
+.ind-conv-nums { font-size: 12px; opacity: .6; display: flex; gap: 12px; margin-bottom: 4px; }
+.ind-conv .ind-bar { width: 100%; }
+
+.ind-prio-item { display: flex; align-items: center; gap: 10px; padding: 8px 0;
+  border-bottom: 1px solid rgba(14,66,58,.06); }
+.ind-prio-item:last-child { border-bottom: none; }
+.ind-prio-item .prio { min-width: 80px; text-align: center; }
+.ind-prio-qtd { font-weight: 700; min-width: 24px; text-align: right; }
+.ind-prio-item .ind-bar { flex: 1; }
+
+.ind-resp-item { display: flex; align-items: center; gap: 10px; padding: 8px 0;
+  border-bottom: 1px solid rgba(14,66,58,.06); }
+.ind-resp-item:last-child { border-bottom: none; }
+.ind-resp-nome { font-weight: 600; font-size: 14px; min-width: 100px; }
+.ind-resp-qtd { font-weight: 700; min-width: 24px; text-align: right; }
+.ind-resp-item .ind-bar { flex: 1; }
+
+.ind-saude-grid { display: flex; gap: 12px; flex-wrap: wrap; }
+.ind-saude-item { flex: 1; min-width: 120px; padding: 14px; border-radius: 10px;
+  text-align: center; font-size: 13px; font-weight: 600; }
+.ind-saude-num { display: block; font-size: 28px; font-weight: 700; line-height: 1; margin-bottom: 4px; }
+.ind-saude-verde { background: #d5f5e3; color: #1e8449; }
+.ind-saude-amarelo { background: #fdebd0; color: #7e5109; }
+.ind-saude-vermelho { background: #fadbd8; color: #922b21; }
+
+/* --- Histórico de Atividades --- */
+.atv-form { background: #f8f6f1; padding: 16px; border-radius: 10px; margin-top: 8px; }
+.atv-form-linha { display: flex; gap: 12px; }
+.atv-campo { flex: 1; }
+.atv-campo label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px; color: var(--verde-escuro); }
+.atv-campo input, .atv-campo select, .atv-campo textarea {
+  padding: 8px 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px;
+  font-family: inherit;
+}
+.atv-campo textarea { resize: vertical; }
+.atv-lista { display: flex; flex-direction: column; gap: 8px; }
+.atv-item { background: #fff; border: 1px solid #e0dcd4; border-radius: 8px; padding: 12px 14px; }
+.atv-item-cabecalho { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+.atv-tipo-badge {
+  display: inline-block; padding: 2px 10px; border-radius: 12px;
+  font-size: 12px; font-weight: 600;
+  background: var(--verde-escuro); color: var(--areia);
+}
+.atv-data { font-size: 13px; color: #888; }
+.atv-resumo { margin: 0; font-size: 14px; line-height: 1.5; }
+.atv-excluir {
+  background: none; border: none; color: #999; font-size: 11px; cursor: pointer;
+  padding: 2px 6px;
+}
+.atv-excluir:hover { color: #c0392b; }
+.botao-link { background: none; border: none; cursor: pointer; }

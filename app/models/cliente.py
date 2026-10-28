@@ -93,6 +93,13 @@ class Cliente(db.Model):
     prioridade = db.Column(db.String(12), nullable=False, default="Pendente", index=True)
     observacoes = db.Column(db.Text, nullable=True)
 
+    # --- Qualificação (5 notas, 0 a 2 cada — Fase 4) ---
+    nota_aderencia = db.Column(db.Integer, nullable=True)
+    nota_dor = db.Column(db.Integer, nullable=True)
+    nota_acesso_decisor = db.Column(db.Integer, nullable=True)
+    nota_viabilidade = db.Column(db.Integer, nullable=True)
+    nota_colaboracao = db.Column(db.Integer, nullable=True)
+
     # --- Contatos padronizados (preenchidos em fases futuras: Gate item 4) ---
     contato_financeiro_nome = db.Column(db.String(255), nullable=True)
     contato_financeiro_email = db.Column(db.String(255), nullable=True)
@@ -145,6 +152,27 @@ class Cliente(db.Model):
         da tabela de preços."""
         from app import domain
         return domain.produto_por_nome(self.plano_contratado)
+
+    CAMPOS_NOTAS = (
+        "nota_aderencia", "nota_dor", "nota_acesso_decisor",
+        "nota_viabilidade", "nota_colaboracao",
+    )
+
+    @property
+    def qualificacao_completa(self) -> bool:
+        """Verdadeiro se as 5 notas foram preenchidas."""
+        return all(getattr(self, c) is not None for c in self.CAMPOS_NOTAS)
+
+    @property
+    def resultado_qualificacao(self) -> dict | None:
+        """Calcula a prioridade a partir das 5 notas, se completas."""
+        if not self.qualificacao_completa:
+            return None
+        from app import domain
+        return domain.calcular_prioridade(
+            self.nota_aderencia, self.nota_dor, self.nota_acesso_decisor,
+            self.nota_viabilidade, self.nota_colaboracao,
+        )
 
     @property
     def fim_fidelidade(self):
