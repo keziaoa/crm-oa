@@ -48,7 +48,10 @@ def create_app(config_class=Config):
             _garantir_colunas_sqlite()
         # PostgreSQL: as tabelas são criadas via "flask db upgrade" (Alembic).
 
-        _criar_usuario_padrao()
+        try:
+            _criar_usuario_padrao()
+        except Exception:
+            db.session.rollback()
 
     return app
 
