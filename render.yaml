@@ -1,0 +1,23 @@
+databases:
+  - name: crm-oa-db
+    plan: free
+    databaseName: crm_oa
+
+services:
+  - type: web
+    name: crm-oa
+    plan: free
+    runtime: python
+    buildCommand: pip install -r requirements.txt && flask db upgrade
+    startCommand: gunicorn run:app --bind 0.0.0.0:$PORT
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: crm-oa-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: FLASK_APP
+        value: run.py
+      - key: PYTHON_VERSION
+        value: "3.12.4"
